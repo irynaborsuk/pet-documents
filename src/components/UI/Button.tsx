@@ -7,6 +7,14 @@ const useStyles = makeStyles((theme: Theme) =>
 			'& > *': {
 				margin: theme.spacing(1),
 			},
+			display: 'flex',
+			backgroundColor: 'white',
+			color: 'teal',
+			textTransform: 'uppercase',
+			padding: '5px',
+			borderRadius: '5px',
+			border: '2px solid teal',
+			boxShadow: '2px 2px 2px 1px rgb(34 103 74 / 61%)'
 		},
 	}),
 );
@@ -14,7 +22,6 @@ const useStyles = makeStyles((theme: Theme) =>
 type ButtonProps = {
 	name: string
 //	border: string;
-//	color: string;
 //	children?: React.ReactNode;
 //	height: string;
 	onClick: () => void;
@@ -26,12 +33,11 @@ export const Button: React.FC<ButtonProps> = ({name, onClick}) => {
 	const classes = useStyles();
 
 	return (
-		<div className={classes.root}>
-			<button
-				onClick={onClick}
-			>
-				{name}
-			</button>
-		</div>
+		<button
+			className={classes.root}
+			onClick={onClick}
+		>
+			{name}
+		</button>
 	);
 }

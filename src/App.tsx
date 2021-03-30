@@ -7,7 +7,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -29,12 +28,20 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             display: 'flex',
         },
+        toolBar: {
+            display: 'flex',
+            justifyContent: 'space-between',
+        },
+        toolBarEnd: {
+            display: 'flex',
+            alignSelf: 'flex-end'
+        },
         appBar: {
             transition: theme.transitions.create(['margin', 'width'], {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.leavingScreen,
             }),
-            backgroundColor: 'teal'
+            backgroundColor: 'white'
         },
         appBarShift: {
             width: `calc(100% - ${drawerWidth}px)`,
@@ -46,6 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         menuButton: {
             marginRight: theme.spacing(2),
+            color: 'teal'
         },
         hide: {
             display: 'none',
@@ -108,7 +116,7 @@ function App() {
                     [classes.appBarShift]: open,
                 })}
             >
-                <Toolbar>
+                <Toolbar className={clsx(classes.toolBar, open && classes.toolBarEnd)}>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -119,20 +127,18 @@ function App() {
                         <MenuIcon />
                     </IconButton>
 
+                    {/* TODO: LogIn and LogOut must replace each other in dependencies if user login ir not */}
+                    {/* TODO: just for now they both displayed - in the future oly one */}
+                    {/* TODO: add if statement */}
+                    {/* TODO: fix how this buttons works */}
 
-                        {/* TODO: LogIn and LogOut must replace each other in dependencies if user login ir not */}
-                        {/* TODO: just for now they both displayed - in the future oly one */}
-                        {/* TODO: add if statement */}
-                        {/* TODO: fix how this buttons works */}
+                    <Button
+                        onClick={() => loginWithRedirect()}
+                        name={'Log In'}
 
-                        <Button
-                            onClick={() => loginWithRedirect()}
-                            name={'Log In'}
-                        />
-                        <Button
-                            name={'Log Out'}
-                            onClick={() => logout({ returnTo: window.location.origin })}
-                        />
+                        // name={'Log Out'}
+                        // onClick={() => logout({ returnTo: window.location.origin })}
+                    />
 
                 </Toolbar>
             </AppBar>
