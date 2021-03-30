@@ -17,8 +17,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
-import LoginButton from './LoginButton';
-import LogoutButton from './LogoutButton';
 
 const drawerWidth = 240;
 
@@ -115,14 +113,6 @@ export default function DrawerMenuLeft() {
 					</IconButton>
 					<Typography variant="h6" noWrap>
 						Persistent drawer
-
-						{/* TODO: LogIn and LogOut must replace each other in dependencies if user login ir not */}
-						{/* TODO: just for now they both displayed - in the future oly one */}
-						{/* TODO: add if statement */}
-						{/* TODO: fix how this buttons works */}
-
-						<LoginButton/>
-						<LogoutButton/>
 					</Typography>
 				</Toolbar>
 			</AppBar>
