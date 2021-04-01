@@ -18,8 +18,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import WelcomePage from './components/WelcomePage';
-import { Button } from './components/UI/Button';
-import { useAuth0 } from '@auth0/auth0-react';
+import LoginButton from './components/UI/LoginButton';
 
 const drawerWidth = 240;
 
@@ -94,8 +93,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function App() {
     const classes = useStyles();
-    const { loginWithRedirect } = useAuth0();
-    const { logout } = useAuth0();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
 
@@ -132,13 +129,7 @@ function App() {
                     {/* TODO: add if statement */}
                     {/* TODO: fix how this buttons works */}
 
-                    <Button
-                        onClick={() => loginWithRedirect()}
-                        name={'Log In'}
-
-                        // name={'Log Out'}
-                        // onClick={() => logout({ returnTo: window.location.origin })}
-                    />
+                    <LoginButton/>
 
                 </Toolbar>
             </AppBar>

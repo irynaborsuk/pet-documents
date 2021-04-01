@@ -14,7 +14,12 @@ const useStyles = makeStyles((theme: Theme) =>
 			padding: '5px',
 			borderRadius: '5px',
 			border: '2px solid teal',
-			boxShadow: '2px 2px 2px 1px rgb(34 103 74 / 61%)'
+			boxShadow: '2px 2px 2px 1px rgb(34 103 74 / 61%)',
+			'&:hover': {
+				backgroundColor: '#00808082',
+				color: 'black',
+				textShadow: '0px 0px 6px rgb(255 255 255)'
+			},
 		},
 	}),
 );
