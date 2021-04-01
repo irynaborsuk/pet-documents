@@ -8,39 +8,39 @@ const useStyles = makeStyles((theme: Theme) =>
 				margin: theme.spacing(1),
 			},
 			display: 'flex',
-			backgroundColor: 'white',
-			color: 'teal',
 			textTransform: 'uppercase',
-			padding: '5px',
+			letterSpacing: '2px',
+			fontSize: '12px',
+			padding: '5px 10px',
 			borderRadius: '5px',
-			border: '2px solid teal',
-			boxShadow: '2px 2px 2px 1px rgb(34 103 74 / 61%)',
+			border: '1px solid rgba(0,0,0,0.3)',
+			borderBottomWidth: '3px',
 			'&:hover': {
-				backgroundColor: '#00808082',
-				color: 'black',
-				textShadow: '0px 0px 6px rgb(255 255 255)'
-			},
+				backgroundColor: '#e3e3e3',
+				borderColor: 'rgba(0,0,0,0.5)',
+			}
 		},
 	}),
 );
 
 type ButtonProps = {
 	name: string
-//	border: string;
-//	children?: React.ReactNode;
-//	height: string;
 	onClick: () => void;
-//	radius: string
-//	width: string;
+	backgroundColor: string;
+	color: string;
 }
 
-export const Button: React.FC<ButtonProps> = ({name, onClick}) => {
+export const Button: React.FC<ButtonProps> = ({name, onClick, backgroundColor, color}) => {
 	const classes = useStyles();
 
 	return (
 		<button
 			className={classes.root}
 			onClick={onClick}
+			style={{
+				backgroundColor: backgroundColor,
+				color: color,
+			}}
 		>
 			{name}
 		</button>

@@ -18,7 +18,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import WelcomePage from './components/WelcomePage';
-import LoginButton from './components/UI/LoginButton';
+import SignInButton from './components/UI/SignInButton';
 
 const drawerWidth = 240;
 
@@ -129,7 +129,7 @@ function App() {
                     {/* TODO: add if statement */}
                     {/* TODO: fix how this buttons works */}
 
-                    <LoginButton/>
+                    <SignInButton/>
 
                 </Toolbar>
             </AppBar>
