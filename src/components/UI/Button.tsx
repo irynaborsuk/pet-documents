@@ -13,12 +13,11 @@ const useStyles = makeStyles((theme: Theme) =>
 			fontSize: '12px',
 			padding: '5px 10px',
 			borderRadius: '5px',
-			border: '1px solid rgba(0 0 0 / 25%)',
-			boxShadow: '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 0px 0px rgb(0 0 0 / 12%)',
+			border: '1px solid rgba(0,0,0,0.3)',
 			borderBottomWidth: '3px',
 			'&:hover': {
 				backgroundColor: '#e3e3e3',
-				borderColor: 'rgba(0 0 0 / 40%)',
+				borderColor: 'rgba(0,0,0,0.5)',
 			}
 		},
 	}),
@@ -46,4 +45,4 @@ export const Button: React.FC<ButtonProps> = ({name, onClick, backgroundColor, c
 			{name}
 		</button>
 	);
-}
+};
