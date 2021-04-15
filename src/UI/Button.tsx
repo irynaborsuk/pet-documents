@@ -5,9 +5,11 @@ const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
 			'& > *': {
-				margin: theme.spacing(1),
+				margin: theme.spacing(1)
 			},
 			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
 			textTransform: 'uppercase',
 			letterSpacing: '2px',
 			fontSize: '12px',
@@ -17,20 +19,31 @@ const useStyles = makeStyles((theme: Theme) =>
 			borderBottomWidth: '3px',
 			'&:hover': {
 				backgroundColor: '#e3e3e3',
-				borderColor: 'rgba(0,0,0,0.5)',
+				borderColor: 'rgba(0,0,0,0.5)'
 			}
-		},
-	}),
+		}
+	})
 );
 
 type ButtonProps = {
 	name: string
-	onClick: () => void;
+	onClick?: () => void;
 	backgroundColor: string;
 	color: string;
+	height?: string;
+	width?: string;
 }
 
-export const Button: React.FC<ButtonProps> = ({name, onClick, backgroundColor, color}) => {
+export const Button: React.FC<ButtonProps> = (
+	{
+		name,
+		onClick,
+		backgroundColor,
+		color,
+		height,
+		width
+	}) => {
+
 	const classes = useStyles();
 
 	return (
@@ -40,6 +53,8 @@ export const Button: React.FC<ButtonProps> = ({name, onClick, backgroundColor, c
 			style={{
 				backgroundColor: backgroundColor,
 				color: color,
+				height: height,
+				width: width
 			}}
 		>
 			{name}

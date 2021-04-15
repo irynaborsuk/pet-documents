@@ -1,15 +1,35 @@
 import React from 'react';
-import { InitialPetData } from '../../types';
+import { GENDER, getGenderLabel, getSpeciesLabel, InitialPetData, SPECIES } from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { createStyles, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
+import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Button } from '../../UI/Button';
+
+const useStyles = makeStyles((theme: Theme) =>
+	createStyles({
+		form: {
+			display: 'flex',
+			flexDirection: 'column'
+		},
+		formControl: {
+			margin: theme.spacing(1),
+			minWidth: 120,
+		},
+		buttonsGroup: {
+			display: 'flex',
+			justifyContent: 'space-between'
+		},
+	})
+)
 
 const AddNewPet = () => {
-
+	const classes = useStyles();
 	const initialValues: InitialPetData = {
 		name: '',
-		species: 0,
+		species: null,
 		breed: '',
-		gender: 0,
+		gender: null,
 		dateOfBirth: '',
 		colour: '',
 		notes: ''
@@ -32,8 +52,7 @@ const AddNewPet = () => {
 				.required('Required'),
 			dateOfBirth: Yup.string()
 				.required('Required'),
-			colour: Yup.string()
-				.required('Required'),
+			colour: Yup.string(),
 			notes: Yup.string()
 		}),
 		onSubmit: values => {
@@ -43,9 +62,152 @@ const AddNewPet = () => {
 	});
 
 	return (
-		<div>
-			
-		</div>
+		<form onSubmit={formik.handleSubmit} className={classes.form}>
+			<FormControl className={classes.formControl}>
+				<TextField
+					label="Pet's Name"
+					variant="outlined"
+					id="name"
+					name="name"
+					type="name"
+					onChange={formik.handleChange}
+					onBlur={formik.handleBlur}
+					value={formik.values.name}
+				/>
+				{formik.touched.name && formik.errors.name ? (
+					<div>{formik.errors.name}</div>
+				) : null}
+			</FormControl>
+
+			<FormControl variant="outlined" className={classes.formControl}>
+				<InputLabel>Species</InputLabel>
+					<Select
+						labelId="demo-simple-select-outlined-label"
+						id="demo-simple-select-outlined"
+						name="species"
+						type="species"
+						label="Species"
+						onChange={formik.handleChange}
+						onBlur={formik.handleBlur}
+						value={formik.values.species}
+
+					>
+						<MenuItem value={SPECIES.CAT}>{<>{getSpeciesLabel[SPECIES.CAT]}</>}</MenuItem>
+						<MenuItem value={SPECIES.DOG}>{<>{getSpeciesLabel[SPECIES.DOG]}</>}</MenuItem>
+					</Select>
+				{formik.touched.species && formik.errors.species ? (
+					<div>{formik.errors.species}</div>
+				) : null}
+			</FormControl>
+
+			<FormControl className={classes.formControl}>
+				<TextField
+					label="Pet's Breed"
+					variant="outlined"
+					id="breed"
+					name="breed"
+					type="breed"
+					onChange={formik.handleChange}
+					onBlur={formik.handleBlur}
+					value={formik.values.breed}
+				/>
+				{formik.touched.breed && formik.errors.breed ? (
+					<div>{formik.errors.breed}</div>
+				) : null}
+			</FormControl>
+
+			<FormControl variant="outlined" className={classes.formControl}>
+				<InputLabel>Gender</InputLabel>
+				<Select
+					labelId="demo-simple-select-outlined-label"
+					id="demo-simple-select-outlined"
+					name="gender"
+					type="gender"
+					label="Gender"
+					onChange={formik.handleChange}
+					onBlur={formik.handleBlur}
+					value={formik.values.species}
+
+				>
+					<MenuItem value={GENDER.MALE}>{<>{getGenderLabel[GENDER.MALE]}</>}</MenuItem>
+					<MenuItem value={GENDER.FEMALE}>{<>{getGenderLabel[GENDER.FEMALE]}</>}</MenuItem>
+				</Select>
+				{formik.touched.species && formik.errors.species ? (
+					<div>{formik.errors.species}</div>
+				) : null}
+			</FormControl>
+
+			<FormControl className={classes.formControl}>
+				<TextField
+					label="Pet's date of birth"
+					InputLabelProps={{
+						shrink: true,
+					}}
+					variant="outlined"
+					id="dateOfBirth"
+					name="dateOfBirth"
+					type="date"
+					onChange={formik.handleChange}
+					onBlur={formik.handleBlur}
+					value={formik.values.dateOfBirth}
+				/>
+				{formik.touched.dateOfBirth && formik.errors.dateOfBirth ? (
+					<div>{formik.errors.dateOfBirth}</div>
+				) : null}
+			</FormControl>
+
+			<FormControl className={classes.formControl}>
+				<TextField
+					label="Animal Colour"
+					variant="outlined"
+					id="colour"
+					name="colour"
+					type="colour"
+					onChange={formik.handleChange}
+					onBlur={formik.handleBlur}
+					value={formik.values.colour}
+				/>
+				{formik.touched.colour && formik.errors.colour ? (
+					<div>{formik.errors.colour}</div>
+				) : null}
+			</FormControl>
+
+			<FormControl className={classes.formControl}>
+				<TextField
+					label="Special notes about animal"
+					variant="outlined"
+					multiline={true}
+					rowsMax={5}
+					id="notes"
+					name="notes"
+					type="notes"
+					onChange={formik.handleChange}
+					onBlur={formik.handleBlur}
+					value={formik.values.notes}
+				/>
+				{formik.touched.notes && formik.errors.notes ? (
+					<div>{formik.errors.notes}</div>
+				) : null}
+			</FormControl>
+
+			<div className={[classes.formControl, classes.buttonsGroup].join(' ')}>
+				<Button
+					name={'Cancel'}
+					backgroundColor={'#eee'}
+					color={'#de399b'}
+					height={'56px'}
+					width={'45%'}
+				/>
+				<Button
+					name={'Create'}
+					backgroundColor={'teal'}
+					color={'#eee'}
+					height={'56px'}
+					width={'46%'}
+				/>
+			</div>
+
+		</form>
 	);
 };
 
