@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GENDER, getGenderLabel, getSpeciesLabel, InitialPetData, SPECIES } from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -20,11 +20,15 @@ const useStyles = makeStyles((theme: Theme) =>
 			display: 'flex',
 			justifyContent: 'space-between'
 		},
+		errorMessage: {
+			color: 'red'
+		}
 	})
 )
 
 const AddNewPet = () => {
 	const classes = useStyles();
+
 	const initialValues: InitialPetData = {
 		name: '',
 		species: null,
@@ -73,9 +77,10 @@ const AddNewPet = () => {
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 					value={formik.values.name}
+					error={!!(formik.touched.name && formik.errors.name)}
 				/>
 				{formik.touched.name && formik.errors.name ? (
-					<div>{formik.errors.name}</div>
+					<div className={classes.errorMessage}>{formik.errors.name}</div>
 				) : null}
 			</FormControl>
 
@@ -90,13 +95,13 @@ const AddNewPet = () => {
 						onChange={formik.handleChange}
 						onBlur={formik.handleBlur}
 						value={formik.values.species}
-
+						error={!!(formik.touched.species && formik.errors.species)}
 					>
 						<MenuItem value={SPECIES.CAT}>{<>{getSpeciesLabel[SPECIES.CAT]}</>}</MenuItem>
 						<MenuItem value={SPECIES.DOG}>{<>{getSpeciesLabel[SPECIES.DOG]}</>}</MenuItem>
 					</Select>
 				{formik.touched.species && formik.errors.species ? (
-					<div>{formik.errors.species}</div>
+					<div className={classes.errorMessage}>{formik.errors.species}</div>
 				) : null}
 			</FormControl>
 
@@ -110,9 +115,10 @@ const AddNewPet = () => {
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 					value={formik.values.breed}
+					error={!!(formik.touched.breed && formik.errors.breed)}
 				/>
 				{formik.touched.breed && formik.errors.breed ? (
-					<div>{formik.errors.breed}</div>
+					<div className={classes.errorMessage}>{formik.errors.breed}</div>
 				) : null}
 			</FormControl>
 
@@ -126,14 +132,14 @@ const AddNewPet = () => {
 					label="Gender"
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
-					value={formik.values.species}
-
+					value={formik.values.gender}
+					error={!!(formik.touched.gender && formik.errors.gender)}
 				>
 					<MenuItem value={GENDER.MALE}>{<>{getGenderLabel[GENDER.MALE]}</>}</MenuItem>
 					<MenuItem value={GENDER.FEMALE}>{<>{getGenderLabel[GENDER.FEMALE]}</>}</MenuItem>
 				</Select>
-				{formik.touched.species && formik.errors.species ? (
-					<div>{formik.errors.species}</div>
+				{formik.touched.gender && formik.errors.gender ? (
+					<div className={classes.errorMessage}>{formik.errors.gender}</div>
 				) : null}
 			</FormControl>
 
@@ -150,9 +156,10 @@ const AddNewPet = () => {
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 					value={formik.values.dateOfBirth}
+					error={!!(formik.touched.dateOfBirth && formik.errors.dateOfBirth)}
 				/>
 				{formik.touched.dateOfBirth && formik.errors.dateOfBirth ? (
-					<div>{formik.errors.dateOfBirth}</div>
+					<div className={classes.errorMessage}>{formik.errors.dateOfBirth}</div>
 				) : null}
 			</FormControl>
 
@@ -166,9 +173,10 @@ const AddNewPet = () => {
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 					value={formik.values.colour}
+					error={!!(formik.touched.colour && formik.errors.colour)}
 				/>
 				{formik.touched.colour && formik.errors.colour ? (
-					<div>{formik.errors.colour}</div>
+					<div className={classes.errorMessage}>{formik.errors.colour}</div>
 				) : null}
 			</FormControl>
 
@@ -184,9 +192,10 @@ const AddNewPet = () => {
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
 					value={formik.values.notes}
+					error={!!(formik.touched.notes && formik.errors.notes)}
 				/>
 				{formik.touched.notes && formik.errors.notes ? (
-					<div>{formik.errors.notes}</div>
+					<div className={classes.errorMessage}>{formik.errors.notes}</div>
 				) : null}
 			</FormControl>
 
