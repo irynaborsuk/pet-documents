@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { GENDER, getGenderLabel, getSpeciesLabel, InitialPetData, SPECIES } from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
