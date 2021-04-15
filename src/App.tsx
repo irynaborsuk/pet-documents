@@ -20,6 +20,7 @@ import WelcomePage from './components/WelcomePage';
 import SignInButton from './UI/SignInButton';
 import PetAccount from './containers/PetAccount/PetAccount';
 import NavigationList from './components/NavigationList';
+import AddNewPet from './containers/PetAccount/AddNewPet';
 
 const drawerWidth = 240;
 
@@ -158,6 +159,7 @@ function App() {
 					<Switch>
 						<Route path="/" exact><WelcomePage/></Route>
 						<Route path="/pet-account"><PetAccount/></Route>
+						<Route path="/create-pet-form"><AddNewPet/></Route>
 					</Switch>
 
 				</main>
