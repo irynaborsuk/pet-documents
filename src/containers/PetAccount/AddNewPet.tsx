@@ -5,23 +5,36 @@ import * as Yup from 'yup';
 import { createStyles, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
+
+const theme = createMuiTheme({
+	palette: {
+		primary: {
+			main: '#008080',
+		},
+	},
+});
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		form: {
 			display: 'flex',
-			flexDirection: 'column'
+			flexDirection: 'column',
+			alignItems: 'center',
 		},
 		formControl: {
+			display: 'flex',
 			margin: theme.spacing(1),
-			minWidth: 120,
+			width: '100%',
+			maxWidth: '900px',
 		},
 		buttonsGroup: {
 			display: 'flex',
 			justifyContent: 'space-between'
 		},
 		errorMessage: {
-			color: 'red'
+			color: '#ff0000'
 		}
 	})
 )
@@ -39,24 +52,25 @@ const AddNewPet = () => {
 		notes: ''
 	}
 
-	{/*TODO: продумати і зробити кращі фільтри для валідації полів*/}
-
 	const formik = useFormik({
 		initialValues,
 		validationSchema: Yup.object({
 			name: Yup.string()
-				.max(15, 'Must be 15 characters or less')
+				.matches(/[a-zA-Z]/, 'Name must contain Latin letters.')
+				.max(40, 'Must be 40 characters or less')
 				.required('Required'),
 			species: Yup.number()
 				.required('Required'),
 			breed: Yup.string()
-				.max(15, 'Must be 15 characters or less')
+				.matches(/[a-zA-Z]/, 'Breed must contain Latin letters.')
+				.max(40, 'Must be 40 characters or less')
 				.required('Required'),
 			gender: Yup.number()
 				.required('Required'),
 			dateOfBirth: Yup.string()
 				.required('Required'),
-			colour: Yup.string(),
+			colour: Yup.string()
+				.matches(/[a-zA-Z]/, 'Animal colour can not be a number, please use Latin letters instead.'),
 			notes: Yup.string()
 		}),
 		onSubmit: values => {
@@ -66,6 +80,7 @@ const AddNewPet = () => {
 	});
 
 	return (
+		<ThemeProvider theme={theme}>
 		<form onSubmit={formik.handleSubmit} className={classes.form}>
 			<FormControl className={classes.formControl}>
 				<TextField
@@ -203,7 +218,7 @@ const AddNewPet = () => {
 				<Button
 					name={'Cancel'}
 					backgroundColor={'#eee'}
-					color={'#de399b'}
+					color={'#ff0000'}
 					height={'56px'}
 					width={'45%'}
 				/>
@@ -217,6 +232,7 @@ const AddNewPet = () => {
 			</div>
 
 		</form>
+		</ThemeProvider>
 	);
 };
 
