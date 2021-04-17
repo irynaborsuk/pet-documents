@@ -8,6 +8,7 @@ const SignInButton = () => {
 	return (
 		<Button
 			name={'Sign in'}
+			type={'button'}
 			onClick={() => loginWithRedirect()}
 			backgroundColor={'#eee'}
 			color={'teal'}

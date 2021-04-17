@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { GENDER, getGenderLabel, getSpeciesLabel, InitialPetData, SPECIES } from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -7,6 +7,9 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
+import axios from '../../hooks/axios';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useHistory } from 'react-router';
 
 const theme = createMuiTheme({
 	palette: {
@@ -39,18 +42,20 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 )
 
+const initialValues: InitialPetData = {
+	name: '',
+	species: '',
+	breed: '',
+	gender: '',
+	dateOfBirth: '',
+	colour: '',
+	notes: ''
+}
+
 const AddNewPet = () => {
 	const classes = useStyles();
-
-	const initialValues: InitialPetData = {
-		name: '',
-		species: null,
-		breed: '',
-		gender: null,
-		dateOfBirth: '',
-		colour: '',
-		notes: ''
-	}
+	const history = useHistory();
+	const { getAccessTokenSilently } = useAuth0();
 
 	const formik = useFormik({
 		initialValues,
@@ -73,9 +78,23 @@ const AddNewPet = () => {
 				.matches(/[a-zA-Z]/, 'Animal colour can not be a number, please use Latin letters instead.'),
 			notes: Yup.string()
 		}),
-		onSubmit: values => {
-			// request to server to add the pet
-			alert(JSON.stringify(values, null, 2));
+		onSubmit: async (values) => {
+			axios.post('/pet/create', {
+				name: values.name,
+				species: values.species,
+				breed: values.breed,
+				gender: values.gender,
+				dateOfBirth: values.dateOfBirth,
+				colour: values.colour,
+				notes: values.notes
+			}, {
+				headers: {
+					Authorization: `Bearer ${await getAccessTokenSilently()}`
+				}
+			})
+				.then((response) => {
+					console.log(response.data);
+				})
 		},
 	});
 
@@ -217,6 +236,8 @@ const AddNewPet = () => {
 			<div className={[classes.formControl, classes.buttonsGroup].join(' ')}>
 				<Button
 					name={'Cancel'}
+					type={'button'}
+					onClick={() => {history.push('/pet-account')}}
 					backgroundColor={'#eee'}
 					color={'#ff0000'}
 					height={'56px'}
@@ -224,6 +245,7 @@ const AddNewPet = () => {
 				/>
 				<Button
 					name={'Create'}
+					type={'submit'}
 					backgroundColor={'teal'}
 					color={'#eee'}
 					height={'56px'}

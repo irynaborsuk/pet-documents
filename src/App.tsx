@@ -5,8 +5,7 @@ import {
 	Switch,
 	Route
 } from 'react-router-dom';
-import clsx from 'clsx';
-import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
@@ -14,13 +13,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import WelcomePage from './components/WelcomePage';
 import SignInButton from './UI/SignInButton';
 import PetAccount from './containers/PetAccount/PetAccount';
 import NavigationList from './components/NavigationList';
 import AddNewPet from './containers/PetAccount/AddNewPet';
+import { Hidden } from '@material-ui/core';
 
 const drawerWidth = 240;
 
@@ -29,82 +27,60 @@ const useStyles = makeStyles((theme: Theme) =>
 		root: {
 			display: 'flex'
 		},
-		toolBar: {
-			display: 'flex',
-			justifyContent: 'space-between'
-		},
-		toolBarEnd: {
-			display: 'flex',
-			alignSelf: 'flex-end'
+		drawer: {
+			[theme.breakpoints.up('sm')]: {
+				width: drawerWidth,
+				flexShrink: 0
+			}
 		},
 		appBar: {
-			transition: theme.transitions.create(['margin', 'width'], {
-				easing: theme.transitions.easing.sharp,
-				duration: theme.transitions.duration.leavingScreen
-			}),
+			[theme.breakpoints.up('sm')]: {
+				width: `calc(100% - ${drawerWidth}px)`,
+				marginLeft: drawerWidth
+			},
 			backgroundColor: 'white'
-		},
-		appBarShift: {
-			width: `calc(100% - ${drawerWidth}px)`,
-			marginLeft: drawerWidth,
-			transition: theme.transitions.create(['margin', 'width'], {
-				easing: theme.transitions.easing.easeOut,
-				duration: theme.transitions.duration.enteringScreen
-			})
 		},
 		menuButton: {
 			marginRight: theme.spacing(2),
+			[theme.breakpoints.up('sm')]: {
+				display: 'none'
+			},
 			color: 'teal'
 		},
-		hide: {
-			display: 'none'
-		},
-		drawer: {
-			width: drawerWidth,
-			flexShrink: 0
+		// necessary for content to be below app bar
+		toolbar: theme.mixins.toolbar,
+		toolBarEnd: {
+			display: 'flex',
+			justifyContent: 'space-between',
+			[theme.breakpoints.up('sm')]: {
+				justifyContent: 'flex-end'
+			}
 		},
 		drawerPaper: {
 			width: drawerWidth
 		},
-		drawerHeader: {
-			display: 'flex',
-			alignItems: 'center',
-			padding: theme.spacing(0, 1),
-			// necessary for content to be below app bar
-			...theme.mixins.toolbar,
-			justifyContent: 'flex-end'
-		},
 		content: {
 			flexGrow: 1,
-			padding: theme.spacing(3),
-			transition: theme.transitions.create('margin', {
-				easing: theme.transitions.easing.sharp,
-				duration: theme.transitions.duration.leavingScreen
-			}),
-			marginLeft: -drawerWidth
-		},
-		contentShift: {
-			transition: theme.transitions.create('margin', {
-				easing: theme.transitions.easing.easeOut,
-				duration: theme.transitions.duration.enteringScreen
-			}),
-			marginLeft: 0
+			padding: theme.spacing(3)
 		}
 	})
 );
 
 function App() {
 	const classes = useStyles();
-	const theme = useTheme();
-	const [open, setOpen] = React.useState(false);
+	const [mobileOpen, setMobileOpen] = React.useState(false);
 
-	const handleDrawerOpen = () => {
-		setOpen(true);
+	const handleDrawerToggle = () => {
+		setMobileOpen(!mobileOpen);
 	};
 
-	const handleDrawerClose = () => {
-		setOpen(false);
-	};
+	const drawer = (
+		<div>
+			<div className={classes.toolbar}/>
+			<Divider/>
+			<NavigationList/>
+		</div>
+	);
 
 	return (
 		<Router>
@@ -112,49 +88,52 @@ function App() {
 				<CssBaseline/>
 				<AppBar
 					position="fixed"
-					className={clsx(classes.appBar, {
-						[classes.appBarShift]: open
-					})}
+					className={classes.appBar}
 				>
-					<Toolbar className={clsx(classes.toolBar, open && classes.toolBarEnd)}>
+					<Toolbar className={classes.toolBarEnd}>
 						<IconButton
 							color="inherit"
 							aria-label="open drawer"
-							onClick={handleDrawerOpen}
+							onClick={handleDrawerToggle}
+							className={classes.menuButton}
 							edge="start"
-							className={clsx(classes.menuButton, open && classes.hide)}
 						>
 							<MenuIcon/>
 						</IconButton>
 						<SignInButton/>
 					</Toolbar>
 				</AppBar>
-				<Drawer
-					className={classes.drawer}
-					variant="persistent"
-					anchor="left"
-					open={open}
-					classes={{
-						paper: classes.drawerPaper
-					}}
-				>
-					<div className={classes.drawerHeader}>
-						<IconButton onClick={handleDrawerClose}>
-							{theme.direction === 'ltr' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
-						</IconButton>
-					</div>
-					<Divider/>
+				<nav className={classes.drawer} aria-label="mailbox folders">
+					<Hidden smUp implementation="css">
+						<Drawer
+							variant="temporary"
+							anchor="left"
+							className={classes.drawer}
+							classes={{
+								paper: classes.drawerPaper
+							}}
+							open={mobileOpen}
+							onClose={handleDrawerToggle}
+							ModalProps={{
+								keepMounted: true
+							}}
+						>
+							{drawer}
+						</Drawer>
+					</Hidden>
+					<Hidden xsDown implementation="css">
+						<Drawer
+							classes={{ paper: classes.drawerPaper }}
+							variant="permanent"
+							open
+						>
+							{drawer}
+						</Drawer>
+					</Hidden>
+				</nav>
 
-					<NavigationList/>
-
-				</Drawer>
-				<main
-					className={clsx(classes.content, {
-						[classes.contentShift]: open
-					})}
-				>
-					<div className={classes.drawerHeader}/>
-
+				<main className={classes.content}>
+					<div className={classes.toolbar}/>
 
 					<Switch>
 						<Route path="/" exact><WelcomePage/></Route>

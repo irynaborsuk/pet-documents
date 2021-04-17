@@ -9,6 +9,7 @@ ReactDOM.render(
   <React.StrictMode>
       <Auth0Provider
           domain="pet-documents.eu.auth0.com"
+          audience="https://pet-documents.eu.auth0.com/api/v2/"
           clientId="ghskmgtIoPGnT2184jubYcgiDpfszapY"
           redirectUri={window.location.origin}
       >

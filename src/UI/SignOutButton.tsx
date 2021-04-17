@@ -8,6 +8,7 @@ const SignOutButton = () => {
 	return (
 		<Button
 			name={'Sign Out'}
+			type={'button'}
 			onClick={() => logout({ returnTo: window.location.origin })}
 			backgroundColor={'#eee'}
 			color={'teal'}
