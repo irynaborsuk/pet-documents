@@ -26,7 +26,8 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 type ButtonProps = {
-	name: string
+	name: string;
+	type: "button" | "reset" | "submit" | undefined;
 	onClick?: () => void;
 	backgroundColor: string;
 	color: string;
@@ -37,6 +38,7 @@ type ButtonProps = {
 export const Button: React.FC<ButtonProps> = (
 	{
 		name,
+		type,
 		onClick,
 		backgroundColor,
 		color,
@@ -49,6 +51,7 @@ export const Button: React.FC<ButtonProps> = (
 	return (
 		<button
 			className={classes.root}
+			type={type}
 			onClick={onClick}
 			style={{
 				backgroundColor: backgroundColor,

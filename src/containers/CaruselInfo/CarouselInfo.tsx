@@ -22,7 +22,7 @@ const items = [
 	}
 ]
 
-{/* TODO: change the way how the props works */}
+{/* TODO: use statistics facts here */}
 function HorizontalScroll(props: any) {
 	return (
 		<Paper

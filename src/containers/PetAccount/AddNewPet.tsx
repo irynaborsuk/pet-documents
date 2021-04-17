@@ -1,71 +1,105 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { GENDER, getGenderLabel, getSpeciesLabel, InitialPetData, SPECIES } from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { createStyles, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
+import axios from '../../hooks/axios';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useHistory } from 'react-router';
+
+const theme = createMuiTheme({
+	palette: {
+		primary: {
+			main: '#008080',
+		},
+	},
+});
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		form: {
 			display: 'flex',
-			flexDirection: 'column'
+			flexDirection: 'column',
+			alignItems: 'center',
 		},
 		formControl: {
+			display: 'flex',
 			margin: theme.spacing(1),
-			minWidth: 120,
+			width: '100%',
+			maxWidth: '900px',
 		},
 		buttonsGroup: {
 			display: 'flex',
 			justifyContent: 'space-between'
 		},
 		errorMessage: {
-			color: 'red'
+			color: '#ff0000'
 		}
 	})
 )
 
+const initialValues: InitialPetData = {
+	name: '',
+	species: '',
+	breed: '',
+	gender: '',
+	dateOfBirth: '',
+	colour: '',
+	notes: ''
+}
+
 const AddNewPet = () => {
 	const classes = useStyles();
-
-	const initialValues: InitialPetData = {
-		name: '',
-		species: null,
-		breed: '',
-		gender: null,
-		dateOfBirth: '',
-		colour: '',
-		notes: ''
-	}
-
-	{/*TODO: продумати і зробити кращі фільтри для валідації полів*/}
+	const history = useHistory();
+	const { getAccessTokenSilently } = useAuth0();
 
 	const formik = useFormik({
 		initialValues,
 		validationSchema: Yup.object({
 			name: Yup.string()
-				.max(15, 'Must be 15 characters or less')
+				.matches(/[a-zA-Z]/, 'Name must contain Latin letters.')
+				.max(40, 'Must be 40 characters or less')
 				.required('Required'),
 			species: Yup.number()
 				.required('Required'),
 			breed: Yup.string()
-				.max(15, 'Must be 15 characters or less')
+				.matches(/[a-zA-Z]/, 'Breed must contain Latin letters.')
+				.max(40, 'Must be 40 characters or less')
 				.required('Required'),
 			gender: Yup.number()
 				.required('Required'),
 			dateOfBirth: Yup.string()
 				.required('Required'),
-			colour: Yup.string(),
+			colour: Yup.string()
+				.matches(/[a-zA-Z]/, 'Animal colour can not be a number, please use Latin letters instead.'),
 			notes: Yup.string()
 		}),
-		onSubmit: values => {
-			// request to server to add the pet
-			alert(JSON.stringify(values, null, 2));
+		onSubmit: async (values) => {
+			axios.post('/pet/create', {
+				name: values.name,
+				species: values.species,
+				breed: values.breed,
+				gender: values.gender,
+				dateOfBirth: values.dateOfBirth,
+				colour: values.colour,
+				notes: values.notes
+			}, {
+				headers: {
+					Authorization: `Bearer ${await getAccessTokenSilently()}`
+				}
+			})
+				.then((response) => {
+					console.log(response.data);
+				})
 		},
 	});
 
 	return (
+		<ThemeProvider theme={theme}>
 		<form onSubmit={formik.handleSubmit} className={classes.form}>
 			<FormControl className={classes.formControl}>
 				<TextField
@@ -202,13 +236,16 @@ const AddNewPet = () => {
 			<div className={[classes.formControl, classes.buttonsGroup].join(' ')}>
 				<Button
 					name={'Cancel'}
+					type={'button'}
+					onClick={() => {history.push('/pet-account')}}
 					backgroundColor={'#eee'}
-					color={'#de399b'}
+					color={'#ff0000'}
 					height={'56px'}
 					width={'45%'}
 				/>
 				<Button
 					name={'Create'}
+					type={'submit'}
 					backgroundColor={'teal'}
 					color={'#eee'}
 					height={'56px'}
@@ -217,6 +254,7 @@ const AddNewPet = () => {
 			</div>
 
 		</form>
+		</ThemeProvider>
 	);
 };
 

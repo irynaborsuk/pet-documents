@@ -20,9 +20,9 @@ export const getGenderLabel = {
 
 export interface InitialPetData {
 	name: string,
-	species: SPECIES | null,
+	species: SPECIES | '',
 	breed: string,
-	gender: GENDER | null,
+	gender: GENDER | '',
 	dateOfBirth: string,
 	colour?: string,
 	notes?: string
