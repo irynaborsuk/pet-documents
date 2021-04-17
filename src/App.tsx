@@ -13,7 +13,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import WelcomePage from './components/WelcomePage';
+import Dashboard from './components/Dashboard';
 import SignInButton from './UI/SignInButton';
 import PetAccount from './containers/PetAccount/PetAccount';
 import NavigationList from './components/NavigationList';
@@ -136,7 +136,7 @@ function App() {
 					<div className={classes.toolbar}/>
 
 					<Switch>
-						<Route path="/" exact><WelcomePage/></Route>
+						<Route path="/" exact><Dashboard/></Route>
 						<Route path="/pet-account"><PetAccount/></Route>
 						<Route path="/create-pet-form"><AddNewPet/></Route>
 					</Switch>
