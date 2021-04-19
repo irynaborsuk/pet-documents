@@ -14,9 +14,9 @@ import { useHistory } from 'react-router';
 const theme = createMuiTheme({
 	palette: {
 		primary: {
-			main: '#008080',
-		},
-	},
+			main: '#008080'
+		}
+	}
 });
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -24,13 +24,13 @@ const useStyles = makeStyles((theme: Theme) =>
 		form: {
 			display: 'flex',
 			flexDirection: 'column',
-			alignItems: 'center',
+			alignItems: 'center'
 		},
 		formControl: {
 			display: 'flex',
 			margin: theme.spacing(1),
 			width: '100%',
-			maxWidth: '900px',
+			maxWidth: '900px'
 		},
 		buttonsGroup: {
 			display: 'flex',
@@ -38,7 +38,12 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		errorMessage: {
 			color: '#ff0000'
-		}
+		},
+		selectedField: {
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'baseline'
+		},
 	})
 )
 
@@ -56,8 +61,20 @@ const AddNewPet = () => {
 	const classes = useStyles();
 	const history = useHistory();
 	const { getAccessTokenSilently } = useAuth0();
+	const [catsBreeds, setCatsBreeds] = useState([]);
+	const [dogsBreeds, setDogsBreeds] = useState([]);
 
-	const formik = useFormik({
+	const {
+		handleSubmit,
+		handleChange,
+		handleBlur,
+		values,
+		errors,
+		touched,
+		isValid,
+		isSubmitting,
+		setFieldValue
+	} = useFormik({
 		initialValues,
 		validationSchema: Yup.object({
 			name: Yup.string()
@@ -95,165 +112,234 @@ const AddNewPet = () => {
 				.then((response) => {
 					console.log(response.data);
 				})
-		},
+		}
 	});
+
+	const getCatsBreeds = async () => {
+		const response = await axios.get('/static/cat-breeds', {
+			headers: {
+				Authorization: `Bearer ${await getAccessTokenSilently()}`
+			}
+		});
+		setCatsBreeds(response.data);
+		console.log(response.data);
+	}
+
+	const getDogsBreeds = async () => {
+		const response = await axios.get('/static/dog-breeds', {
+			headers: {
+				Authorization: `Bearer ${await getAccessTokenSilently()}`
+			}
+		});
+		setDogsBreeds(response.data);
+		console.log(response.data);
+	}
+
+	useEffect(() => {
+		getCatsBreeds().then();
+	}, [SPECIES.CAT])
+
+	useEffect(() => {
+		getDogsBreeds().then();
+	}, [SPECIES.DOG])
+
+	const validateBreeds = () => {
+		console.log(values.species)
+		if (values.species === SPECIES.CAT) {
+
+			return;
+		}
+		if (values.species === SPECIES.DOG) {
+			// logic here
+			return;
+		}
+		return;
+	}
+
+	validateBreeds()
 
 	return (
 		<ThemeProvider theme={theme}>
-		<form onSubmit={formik.handleSubmit} className={classes.form}>
-			<FormControl className={classes.formControl}>
-				<TextField
-					label="Pet's Name"
-					variant="outlined"
-					id="name"
-					name="name"
-					type="name"
-					onChange={formik.handleChange}
-					onBlur={formik.handleBlur}
-					value={formik.values.name}
-					error={!!(formik.touched.name && formik.errors.name)}
-				/>
-				{formik.touched.name && formik.errors.name ? (
-					<div className={classes.errorMessage}>{formik.errors.name}</div>
-				) : null}
-			</FormControl>
+			<form onSubmit={handleSubmit} className={classes.form}>
+				<FormControl className={classes.formControl}>
+					<TextField
+						label="Pet's Name"
+						variant="outlined"
+						id="name"
+						name="name"
+						type="name"
+						onChange={handleChange}
+						onBlur={handleBlur}
+						value={values.name}
+						error={!!(touched.name && errors.name)}
+					/>
+					{touched.name && errors.name ? (
+						<div className={classes.errorMessage}>{errors.name}</div>
+					) : null}
+				</FormControl>
 
-			<FormControl variant="outlined" className={classes.formControl}>
-				<InputLabel>Species</InputLabel>
+				<FormControl variant="outlined" className={classes.formControl}>
+					<InputLabel>Species</InputLabel>
 					<Select
 						labelId="demo-simple-select-outlined-label"
 						id="demo-simple-select-outlined"
 						name="species"
 						type="species"
 						label="Species"
-						onChange={formik.handleChange}
-						onBlur={formik.handleBlur}
-						value={formik.values.species}
-						error={!!(formik.touched.species && formik.errors.species)}
+						onChange={handleChange}
+						onBlur={handleBlur}
+						value={values.species}
+						error={!!(touched.species && errors.species)}
 					>
 						<MenuItem value={SPECIES.CAT}>{<>{getSpeciesLabel[SPECIES.CAT]}</>}</MenuItem>
 						<MenuItem value={SPECIES.DOG}>{<>{getSpeciesLabel[SPECIES.DOG]}</>}</MenuItem>
 					</Select>
-				{formik.touched.species && formik.errors.species ? (
-					<div className={classes.errorMessage}>{formik.errors.species}</div>
-				) : null}
-			</FormControl>
+					{touched.species && errors.species ? (
+						<div className={classes.errorMessage}>{errors.species}</div>
+					) : null}
+				</FormControl>
 
-			<FormControl className={classes.formControl}>
-				<TextField
-					label="Pet's Breed"
-					variant="outlined"
-					id="breed"
-					name="breed"
-					type="breed"
-					onChange={formik.handleChange}
-					onBlur={formik.handleBlur}
-					value={formik.values.breed}
-					error={!!(formik.touched.breed && formik.errors.breed)}
-				/>
-				{formik.touched.breed && formik.errors.breed ? (
-					<div className={classes.errorMessage}>{formik.errors.breed}</div>
-				) : null}
-			</FormControl>
+				<FormControl variant="outlined" className={classes.formControl}>
+					<InputLabel>Pet's Breed</InputLabel>
+					<Select
+						labelId="demo-simple-select-outlined-label"
+						id="demo-simple-select-outlined"
+						name="breed"
+						type="breed"
+						label="Breed"
+						onChange={handleChange}
+						onBlur={handleBlur}
+						value={values.breed}
+						error={!!(touched.breed && errors.breed)}
+					>
+						{values.species === SPECIES.CAT ?
+							<MenuItem className={classes.selectedField}>
+								{catsBreeds.map((item: any) => {
+									return (
+										<MenuItem key={item._id}>
+											<>{item.name}</>
+										</MenuItem>
+									)
+								})}
+							</MenuItem>
+							:
+							<MenuItem className={classes.selectedField}>
+								{dogsBreeds.map((item: any) => {
+									return (
+										<MenuItem key={item._id}>
+											<>{item.name}</>
+										</MenuItem>
+									)
+								})}
+							</MenuItem>
+						}
 
-			<FormControl variant="outlined" className={classes.formControl}>
-				<InputLabel>Gender</InputLabel>
-				<Select
-					labelId="demo-simple-select-outlined-label"
-					id="demo-simple-select-outlined"
-					name="gender"
-					type="gender"
-					label="Gender"
-					onChange={formik.handleChange}
-					onBlur={formik.handleBlur}
-					value={formik.values.gender}
-					error={!!(formik.touched.gender && formik.errors.gender)}
-				>
-					<MenuItem value={GENDER.MALE}>{<>{getGenderLabel[GENDER.MALE]}</>}</MenuItem>
-					<MenuItem value={GENDER.FEMALE}>{<>{getGenderLabel[GENDER.FEMALE]}</>}</MenuItem>
-				</Select>
-				{formik.touched.gender && formik.errors.gender ? (
-					<div className={classes.errorMessage}>{formik.errors.gender}</div>
-				) : null}
-			</FormControl>
+					</Select>
+					{touched.breed && errors.breed ? (
+						<div className={classes.errorMessage}>{errors.breed}</div>
+					) : null}
+				</FormControl>
 
-			<FormControl className={classes.formControl}>
-				<TextField
-					label="Pet's date of birth"
-					InputLabelProps={{
-						shrink: true,
-					}}
-					variant="outlined"
-					id="dateOfBirth"
-					name="dateOfBirth"
-					type="date"
-					onChange={formik.handleChange}
-					onBlur={formik.handleBlur}
-					value={formik.values.dateOfBirth}
-					error={!!(formik.touched.dateOfBirth && formik.errors.dateOfBirth)}
-				/>
-				{formik.touched.dateOfBirth && formik.errors.dateOfBirth ? (
-					<div className={classes.errorMessage}>{formik.errors.dateOfBirth}</div>
-				) : null}
-			</FormControl>
+				<FormControl variant="outlined" className={classes.formControl}>
+					<InputLabel>Gender</InputLabel>
+					<Select
+						labelId="demo-simple-select-outlined-label"
+						id="demo-simple-select-outlined"
+						name="gender"
+						type="gender"
+						label="Gender"
+						onChange={handleChange}
+						onBlur={handleBlur}
+						value={values.gender}
+						error={!!(touched.gender && errors.gender)}
+					>
+						<MenuItem value={GENDER.MALE}>{<>{getGenderLabel[GENDER.MALE]}</>}</MenuItem>
+						<MenuItem value={GENDER.FEMALE}>{<>{getGenderLabel[GENDER.FEMALE]}</>}</MenuItem>
+					</Select>
+					{touched.gender && errors.gender ? (
+						<div className={classes.errorMessage}>{errors.gender}</div>
+					) : null}
+				</FormControl>
 
-			<FormControl className={classes.formControl}>
-				<TextField
-					label="Animal Colour"
-					variant="outlined"
-					id="colour"
-					name="colour"
-					type="colour"
-					onChange={formik.handleChange}
-					onBlur={formik.handleBlur}
-					value={formik.values.colour}
-					error={!!(formik.touched.colour && formik.errors.colour)}
-				/>
-				{formik.touched.colour && formik.errors.colour ? (
-					<div className={classes.errorMessage}>{formik.errors.colour}</div>
-				) : null}
-			</FormControl>
+				<FormControl className={classes.formControl}>
+					<TextField
+						label="Pet's date of birth"
+						InputLabelProps={{
+							shrink: true
+						}}
+						variant="outlined"
+						id="dateOfBirth"
+						name="dateOfBirth"
+						type="date"
+						onChange={handleChange}
+						onBlur={handleBlur}
+						value={values.dateOfBirth}
+						error={!!(touched.dateOfBirth && errors.dateOfBirth)}
+					/>
+					{touched.dateOfBirth && errors.dateOfBirth ? (
+						<div className={classes.errorMessage}>{errors.dateOfBirth}</div>
+					) : null}
+				</FormControl>
 
-			<FormControl className={classes.formControl}>
-				<TextField
-					label="Special notes about animal"
-					variant="outlined"
-					multiline={true}
-					rowsMax={5}
-					id="notes"
-					name="notes"
-					type="notes"
-					onChange={formik.handleChange}
-					onBlur={formik.handleBlur}
-					value={formik.values.notes}
-					error={!!(formik.touched.notes && formik.errors.notes)}
-				/>
-				{formik.touched.notes && formik.errors.notes ? (
-					<div className={classes.errorMessage}>{formik.errors.notes}</div>
-				) : null}
-			</FormControl>
+				<FormControl className={classes.formControl}>
+					<TextField
+						label="Animal Colour"
+						variant="outlined"
+						id="colour"
+						name="colour"
+						type="colour"
+						onChange={handleChange}
+						onBlur={handleBlur}
+						value={values.colour}
+						error={!!(touched.colour && errors.colour)}
+					/>
+					{touched.colour && errors.colour ? (
+						<div className={classes.errorMessage}>{errors.colour}</div>
+					) : null}
+				</FormControl>
 
-			<div className={[classes.formControl, classes.buttonsGroup].join(' ')}>
-				<Button
-					name={'Cancel'}
-					type={'button'}
-					onClick={() => {history.push('/pet-account')}}
-					backgroundColor={'#eee'}
-					color={'#ff0000'}
-					height={'56px'}
-					width={'45%'}
-				/>
-				<Button
-					name={'Create'}
-					type={'submit'}
-					backgroundColor={'teal'}
-					color={'#eee'}
-					height={'56px'}
-					width={'46%'}
-				/>
-			</div>
+				<FormControl className={classes.formControl}>
+					<TextField
+						label="Special notes about animal"
+						variant="outlined"
+						multiline={true}
+						rowsMax={5}
+						id="notes"
+						name="notes"
+						type="notes"
+						onChange={handleChange}
+						onBlur={handleBlur}
+						value={values.notes}
+						error={!!(touched.notes && errors.notes)}
+					/>
+					{touched.notes && errors.notes ? (
+						<div className={classes.errorMessage}>{errors.notes}</div>
+					) : null}
+				</FormControl>
 
-		</form>
+				<div className={[classes.formControl, classes.buttonsGroup].join(' ')}>
+					<Button
+						name={'Cancel'}
+						type={'button'}
+						onClick={() => {
+							history.push('/pet-account')
+						}}
+						backgroundColor={'#eee'}
+						color={'#ff0000'}
+						height={'56px'}
+						width={'45%'}
+					/>
+					<Button
+						name={'Create'}
+						type={'submit'}
+						backgroundColor={'teal'}
+						color={'#eee'}
+						height={'56px'}
+						width={'46%'}
+					/>
+				</div>
+
+			</form>
 		</ThemeProvider>
 	);
 };
