@@ -34,7 +34,7 @@ const navButtonStyle: CarouselStyleProps = {
 	}
 }
 
-const itemss = [
+/*const items = [
 	{
 		name: "Cat info",
 		description: "Some ifo about cat's food",
@@ -50,7 +50,7 @@ const itemss = [
 		description: "Some advertising for dog's food",
 		color: "#CE7E78"
 	}
-]
+]*/
 
 const theme = createMuiTheme({});
 
@@ -112,8 +112,8 @@ const CarouselInfo = () => {
 			animation={'slide'}
 			indicators={false}
 			interval={12000}
-			swipe={true}
-			navButtonsAlwaysVisible={!sm}
+			swipe={true} // for mobile version instead of button will be swappable
+			navButtonsAlwaysInvisible={!sm}
 			navButtonsProps={navButtonStyle}
 		>
 			{
