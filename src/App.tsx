@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			[theme.breakpoints.up('sm')]: {
 				display: 'none'
 			},
-			color: 'teal'
+			color: 'var(--color-basic-green)'
 		},
 		// necessary for content to be below app bar
 		toolbar: theme.mixins.toolbar,
@@ -88,8 +88,6 @@ function App() {
 	const { user, isAuthenticated } = useAuth0();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const isMenuOpen = Boolean(anchorEl);
-
-	console.log(user);
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen);

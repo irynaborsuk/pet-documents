@@ -21,7 +21,7 @@ const useStyles = makeStyles(() =>
 			justifyContent: 'flex-end'
 		},
 		arrowButton: {
-			color: 'teal'
+			color: 'var(--color-basic-green)'
 		}
 	})
 )

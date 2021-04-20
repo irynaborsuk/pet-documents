@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			justifyContent: 'space-between'
 		},
 		errorMessage: {
-			color: '#ff0000'
+			color: 'var(--color-bright-red)'
 		},
 		selectedField: {
 			display: 'flex',
@@ -324,16 +324,16 @@ const AddNewPet = () => {
 						onClick={() => {
 							history.push('/pet-account')
 						}}
-						backgroundColor={'#eee'}
-						color={'#ff0000'}
+						backgroundColor={'var(--color-basic-grey)'}
+						color={'var(--color-bright-red)'}
 						height={'56px'}
 						width={'45%'}
 					/>
 					<Button
 						name={'Create'}
 						type={'submit'}
-						backgroundColor={'teal'}
-						color={'#eee'}
+						backgroundColor={'var(--color-basic-green)'}
+						color={'var(--color-basic-grey)'}
 						height={'56px'}
 						width={'46%'}
 					/>

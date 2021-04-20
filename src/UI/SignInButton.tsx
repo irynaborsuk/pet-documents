@@ -10,8 +10,8 @@ const SignInButton = () => {
 			name={'Sign in'}
 			type={'button'}
 			onClick={() => loginWithRedirect()}
-			backgroundColor={'#eee'}
-			color={'teal'}
+			backgroundColor={'var(--color-basic-grey)'}
+			color={'var(--color-basic-green)'}
 		/>
 	);
 };

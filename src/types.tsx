@@ -1,3 +1,5 @@
+import React from 'react';
+
 export enum SPECIES {
 	CAT,
 	DOG,
@@ -26,4 +28,14 @@ export interface InitialPetData {
 	dateOfBirth: string,
 	colour?: string,
 	notes?: string
+}
+
+export interface CarouselInfoResponse {
+	_id: string;
+	name: string;
+}
+
+export interface CarouselStyleProps {
+	className: string,
+	style: React.CSSProperties
 }

@@ -18,8 +18,8 @@ const useStyles = makeStyles((theme: Theme) =>
 			border: '1px solid rgba(0,0,0,0.3)',
 			borderBottomWidth: '3px',
 			'&:hover': {
-				backgroundColor: '#e3e3e3',
-				borderColor: 'rgba(0,0,0,0.5)'
+				backgroundColor: 'var(--color-hover-grey)',
+				borderColor: 'var(--color-black-rgba)'
 			}
 		}
 	})
