@@ -12,6 +12,7 @@ code {
     monospace;
 }
 
+/* use only my own Button presentation component */
 :root {
   --color-basic-green: #008080;
   --color-bright-red: #ff0000;

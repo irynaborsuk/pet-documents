@@ -1,11 +1,11 @@
 import React from 'react';
 import { Card, CardActions, CardHeader, createStyles, IconButton } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useHistory } from 'react-router';
 import { useAuth0 } from '@auth0/auth0-react';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
 			display: 'flex',
@@ -22,7 +22,7 @@ const useStyles = makeStyles(() =>
 			justifyContent: 'flex-end'
 		},
 		arrowButton: {
-			color: 'var(--color-basic-green)'
+			color: theme.palette.primary.main
 		}
 	})
 )

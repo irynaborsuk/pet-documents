@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, createStyles, Paper, styled, useMediaQuery } from '@material-ui/core';
+import { Card, createStyles, useMediaQuery } from '@material-ui/core';
 import Carousel from 'react-material-ui-carousel';
 import axios from '../../hooks/axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { createMuiTheme, makeStyles, Theme } from '@material-ui/core/styles';
 import { CarouselStyleProps } from '../../types';
-
-// for now, this items will be hardcoded
-// in the future, if it will be necessary - may replace for dynamic cards which the admin of the site can update and delete
 
 const useStyles = makeStyles((theme:Theme) =>
 	createStyles({
@@ -22,7 +19,21 @@ const useStyles = makeStyles((theme:Theme) =>
 			[theme.breakpoints.up('sm')]: {
 				padding: '0 70px',
 			},
-		}
+		},
+		cardContent: {
+			display: 'flex',
+			flexDirection: 'column',
+			justifyContent: 'space-around',
+			minHeight: 'inherit',
+		},
+		cardContentTitle: {
+			display: 'flex',
+			color: theme.palette.primary.dark
+		},
+		cardContentItem: {
+			display: 'flex',
+
+		},
 	})
 )
 
@@ -123,8 +134,10 @@ const CarouselInfo = () => {
 						className={classes.cardInfo}
 						elevation={10}
 					>
-						<div style={{display: 'flex', color: 'var(--color-basic-green)'}}>Interesting Fact!</div>
-						<div style={{display: 'flex'}}>{item.name}</div>
+						<div className={classes.cardContent}>
+							<div className={classes.cardContentTitle}>Interesting Fact!</div>
+							<div className={classes.cardContentItem}>{item.name}</div>
+						</div>
 					</Card>
 				})
 			}

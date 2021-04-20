@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Divider from '@material-ui/core/Divider';
@@ -18,9 +17,10 @@ import SignInButton from './UI/SignInButton';
 import PetAccount from './containers/PetAccount/PetAccount';
 import NavigationList from './components/NavigationList';
 import AddNewPet from './containers/PetAccount/AddNewPet';
-import { Avatar, Card, CardActions, CardContent, CardHeader, Hidden, Menu, MenuItem } from '@material-ui/core';
+import { Avatar, Card, CardActions, CardHeader, Hidden, Menu, MenuItem } from '@material-ui/core';
 import { useAuth0 } from '@auth0/auth0-react';
 import SignOutButton from './UI/SignOutButton';
+import withLocalTheme from './hoc/withLocalTheme';
 
 const drawerWidth = 240;
 
@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			[theme.breakpoints.up('sm')]: {
 				display: 'none'
 			},
-			color: 'var(--color-basic-green)'
+			color: theme.palette.primary.main
 		},
 		// necessary for content to be below app bar
 		toolbar: theme.mixins.toolbar,
@@ -143,7 +143,6 @@ function App() {
 	return (
 		<Router>
 			<div className={classes.root}>
-				<CssBaseline/>
 				<AppBar
 					position="fixed"
 					className={classes.appBar}
@@ -215,4 +214,4 @@ function App() {
 	);
 }
 
-export default App;
+export default withLocalTheme(App);

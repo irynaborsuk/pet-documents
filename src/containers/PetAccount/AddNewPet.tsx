@@ -5,19 +5,9 @@ import * as Yup from 'yup';
 import { createStyles, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
-import { createMuiTheme } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/styles';
 import axios from '../../hooks/axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useHistory } from 'react-router';
-
-const theme = createMuiTheme({
-	palette: {
-		primary: {
-			main: '#008080'
-		}
-	}
-});
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -37,13 +27,13 @@ const useStyles = makeStyles((theme: Theme) =>
 			justifyContent: 'space-between'
 		},
 		errorMessage: {
-			color: 'var(--color-bright-red)'
+			color: theme.palette.error.main,
 		},
 		selectedField: {
 			display: 'flex',
 			flexDirection: 'column',
 			alignItems: 'baseline'
-		},
+		}
 	})
 )
 
@@ -159,24 +149,21 @@ const AddNewPet = () => {
 	validateBreeds()
 
 	return (
-		<ThemeProvider theme={theme}>
+
 			<form onSubmit={handleSubmit} className={classes.form}>
-				<FormControl className={classes.formControl}>
-					<TextField
-						label="Pet's Name"
-						variant="outlined"
-						id="name"
-						name="name"
-						type="name"
-						onChange={handleChange}
-						onBlur={handleBlur}
-						value={values.name}
-						error={!!(touched.name && errors.name)}
-					/>
-					{touched.name && errors.name ? (
-						<div className={classes.errorMessage}>{errors.name}</div>
-					) : null}
-				</FormControl>
+				<TextField
+					className={classes.formControl}
+					label="Pet's Name"
+					variant="outlined"
+					id="name"
+					name="name"
+					type="name"
+					onChange={handleChange}
+					onBlur={handleBlur}
+					value={values.name}
+					error={!!(touched.name && errors.name)}
+					helperText={errors.name}
+				/>
 
 				<FormControl variant="outlined" className={classes.formControl}>
 					<InputLabel>Species</InputLabel>
@@ -212,27 +199,6 @@ const AddNewPet = () => {
 						value={values.breed}
 						error={!!(touched.breed && errors.breed)}
 					>
-						{values.species === SPECIES.CAT ?
-							<MenuItem className={classes.selectedField}>
-								{catsBreeds.map((item: any) => {
-									return (
-										<MenuItem key={item._id}>
-											<>{item.name}</>
-										</MenuItem>
-									)
-								})}
-							</MenuItem>
-							:
-							<MenuItem className={classes.selectedField}>
-								{dogsBreeds.map((item: any) => {
-									return (
-										<MenuItem key={item._id}>
-											<>{item.name}</>
-										</MenuItem>
-									)
-								})}
-							</MenuItem>
-						}
 
 					</Select>
 					{touched.breed && errors.breed ? (
@@ -261,61 +227,50 @@ const AddNewPet = () => {
 					) : null}
 				</FormControl>
 
-				<FormControl className={classes.formControl}>
-					<TextField
-						label="Pet's date of birth"
-						InputLabelProps={{
-							shrink: true
-						}}
-						variant="outlined"
-						id="dateOfBirth"
-						name="dateOfBirth"
-						type="date"
-						onChange={handleChange}
-						onBlur={handleBlur}
-						value={values.dateOfBirth}
-						error={!!(touched.dateOfBirth && errors.dateOfBirth)}
-					/>
-					{touched.dateOfBirth && errors.dateOfBirth ? (
-						<div className={classes.errorMessage}>{errors.dateOfBirth}</div>
-					) : null}
-				</FormControl>
-
-				<FormControl className={classes.formControl}>
-					<TextField
-						label="Animal Colour"
-						variant="outlined"
-						id="colour"
-						name="colour"
-						type="colour"
-						onChange={handleChange}
-						onBlur={handleBlur}
-						value={values.colour}
-						error={!!(touched.colour && errors.colour)}
-					/>
-					{touched.colour && errors.colour ? (
-						<div className={classes.errorMessage}>{errors.colour}</div>
-					) : null}
-				</FormControl>
-
-				<FormControl className={classes.formControl}>
-					<TextField
-						label="Special notes about animal"
-						variant="outlined"
-						multiline={true}
-						rowsMax={5}
-						id="notes"
-						name="notes"
-						type="notes"
-						onChange={handleChange}
-						onBlur={handleBlur}
-						value={values.notes}
-						error={!!(touched.notes && errors.notes)}
-					/>
-					{touched.notes && errors.notes ? (
-						<div className={classes.errorMessage}>{errors.notes}</div>
-					) : null}
-				</FormControl>
+				<TextField
+					className={classes.formControl}
+					label="Pet's date of birth"
+					InputLabelProps={{
+						shrink: true
+					}}
+					variant="outlined"
+					id="dateOfBirth"
+					name="dateOfBirth"
+					type="date"
+					onChange={handleChange}
+					onBlur={handleBlur}
+					value={values.dateOfBirth}
+					error={!!(touched.dateOfBirth && errors.dateOfBirth)}
+					helperText={errors.dateOfBirth}
+				/>
+				<TextField
+					className={classes.formControl}
+					label="Animal Colour"
+					variant="outlined"
+					id="colour"
+					name="colour"
+					type="colour"
+					onChange={handleChange}
+					onBlur={handleBlur}
+					value={values.colour}
+					error={!!(touched.colour && errors.colour)}
+					helperText={errors.colour}
+				/>
+				<TextField
+					className={classes.formControl}
+					label="Special notes about animal"
+					variant="outlined"
+					multiline={true}
+					rowsMax={5}
+					id="notes"
+					name="notes"
+					type="notes"
+					onChange={handleChange}
+					onBlur={handleBlur}
+					value={values.notes}
+					error={!!(touched.notes && errors.notes)}
+					helperText={errors.notes}
+				/>
 
 				<div className={[classes.formControl, classes.buttonsGroup].join(' ')}>
 					<Button
@@ -340,7 +295,7 @@ const AddNewPet = () => {
 				</div>
 
 			</form>
-		</ThemeProvider>
+
 	);
 };
 
