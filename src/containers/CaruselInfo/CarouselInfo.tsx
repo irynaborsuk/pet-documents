@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Card, createStyles, useMediaQuery } from '@material-ui/core';
 import Carousel from 'react-material-ui-carousel';
-import axios from '../../hooks/axios';
+import axios from '../../hooks/useAxiosInterceptors';
 import { useAuth0 } from '@auth0/auth0-react';
 import { createMuiTheme, makeStyles, Theme } from '@material-ui/core/styles';
 import { CarouselStyleProps } from '../../types';
+import authorizedAxios from '../../hooks/useAxiosInterceptors';
 
 const useStyles = makeStyles((theme:Theme) =>
 	createStyles({
@@ -28,7 +29,8 @@ const useStyles = makeStyles((theme:Theme) =>
 		},
 		cardContentTitle: {
 			display: 'flex',
-			color: theme.palette.primary.dark
+			color: theme.palette.primary.dark,
+			fontSize: 'x-large'
 		},
 		cardContentItem: {
 			display: 'flex',
@@ -86,11 +88,7 @@ const CarouselInfo = () => {
 
 	const getCatFacts = async () => {
 		try {
-			const response = await axios.get('/static/cat-facts', {
-				headers: {
-					Authorization: `Bearer ${await getAccessTokenSilently()}`
-				}
-			})
+			const response = await authorizedAxios.get('/static/cat-facts')
 			setCatsFacts(response.data);
 		} catch (error) {
 
@@ -99,11 +97,7 @@ const CarouselInfo = () => {
 
 	const getDogsFacts = async () => {
 		try {
-			const response = await axios.get('/static/dog-facts', {
-				headers: {
-					Authorization: `Bearer ${await getAccessTokenSilently()}`
-				}
-			})
+			const response = await authorizedAxios.get('/static/dog-facts')
 			setDogsFacts(response.data);
 		} catch (error) {
 

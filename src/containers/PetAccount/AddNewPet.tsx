@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { createStyles, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
-import axios from '../../hooks/axios';
+import axios from '../../hooks/useAxiosInterceptors';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useHistory } from 'react-router';
 
@@ -61,9 +61,6 @@ const AddNewPet = () => {
 		values,
 		errors,
 		touched,
-		isValid,
-		isSubmitting,
-		setFieldValue
 	} = useFormik({
 		initialValues,
 		validationSchema: Yup.object({
@@ -94,10 +91,6 @@ const AddNewPet = () => {
 				dateOfBirth: values.dateOfBirth,
 				colour: values.colour,
 				notes: values.notes
-			}, {
-				headers: {
-					Authorization: `Bearer ${await getAccessTokenSilently()}`
-				}
 			})
 				.then((response) => {
 					console.log(response.data);
@@ -106,21 +99,13 @@ const AddNewPet = () => {
 	});
 
 	const getCatsBreeds = async () => {
-		const response = await axios.get('/static/cat-breeds', {
-			headers: {
-				Authorization: `Bearer ${await getAccessTokenSilently()}`
-			}
-		});
+		const response = await axios.get('/static/cat-breeds');
 		setCatsBreeds(response.data);
 		console.log(response.data);
 	}
 
 	const getDogsBreeds = async () => {
-		const response = await axios.get('/static/dog-breeds', {
-			headers: {
-				Authorization: `Bearer ${await getAccessTokenSilently()}`
-			}
-		});
+		const response = await axios.get('/static/dog-breeds');
 		setDogsBreeds(response.data);
 		console.log(response.data);
 	}
@@ -132,21 +117,6 @@ const AddNewPet = () => {
 	useEffect(() => {
 		getDogsBreeds().then();
 	}, [SPECIES.DOG])
-
-	const validateBreeds = () => {
-		console.log(values.species)
-		if (values.species === SPECIES.CAT) {
-
-			return;
-		}
-		if (values.species === SPECIES.DOG) {
-			// logic here
-			return;
-		}
-		return;
-	}
-
-	validateBreeds()
 
 	return (
 

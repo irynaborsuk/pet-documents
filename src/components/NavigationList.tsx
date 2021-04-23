@@ -13,6 +13,9 @@ const useStyles = makeStyles((theme: Theme) =>
 		homeButton: {
 			display: 'flex',
 			justifyContent: 'center'
+		},
+		svgStyled: {
+			fill: theme.palette.primary.main
 		}
 	}))
 
@@ -28,7 +31,9 @@ const NavigationList = () => {
 					history.push('/')
 				}}
 			>
-				<ListItemIcon><HomeIcon/></ListItemIcon>
+				<ListItemIcon>
+					<HomeIcon className={classes.svgStyled}/>
+				</ListItemIcon>
 			</ListItem>
 
 			<ListItem
@@ -37,7 +42,9 @@ const NavigationList = () => {
 					history.push('/pet-account')
 				}}
 			>
-				<ListItemIcon><PetsIcon/></ListItemIcon>
+				<ListItemIcon>
+					<PetsIcon className={classes.svgStyled}/>
+				</ListItemIcon>
 				<ListItemText primary={'Pet Account'}/>
 			</ListItem>
 		</List>

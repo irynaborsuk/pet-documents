@@ -21,6 +21,7 @@ import { Avatar, Card, CardActions, CardHeader, Hidden, Menu, MenuItem } from '@
 import { useAuth0 } from '@auth0/auth0-react';
 import SignOutButton from './UI/SignOutButton';
 import withLocalTheme from './hoc/withLocalTheme';
+import { useAxiosInterceptors } from './hooks/useAxiosInterceptors';
 
 const drawerWidth = 240;
 
@@ -83,6 +84,8 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function App() {
+	useAxiosInterceptors();
+
 	const classes = useStyles();
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 	const { user, isAuthenticated } = useAuth0();
