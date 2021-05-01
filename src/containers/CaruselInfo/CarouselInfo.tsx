@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, createStyles, useMediaQuery } from '@material-ui/core';
 import Carousel from 'react-material-ui-carousel';
-import axios from '../../hooks/useAxiosInterceptors';
-import { useAuth0 } from '@auth0/auth0-react';
 import { createMuiTheme, makeStyles, Theme } from '@material-ui/core/styles';
 import { CarouselStyleProps } from '../../types';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
@@ -70,7 +68,6 @@ const theme = createMuiTheme({});
 const CarouselInfo = () => {
 	const sm = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
 	const classes = useStyles();
-	const { getAccessTokenSilently } = useAuth0();
 	const [catsFacts, setCatsFacts] = useState([]);
 	const [dogsFacts, setDogsFacts] = useState([]);
 	const items: Array<object> = [];

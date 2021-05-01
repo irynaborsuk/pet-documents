@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { GENDER, getGenderLabel, getSpeciesLabel, InitialPetData, SPECIES } from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -6,8 +6,12 @@ import { createStyles, FormControl, InputLabel, MenuItem, Select, TextField } fr
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
 import axios from '../../hooks/useAxiosInterceptors';
-import { useAuth0 } from '@auth0/auth0-react';
 import { useHistory } from 'react-router';
+import { getDogBreedsReduxThunk } from '../../store/dog-breeds/effects';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectDogBreeds, selectIsDogBreedsLoaded } from '../../store/dog-breeds/selectors';
+import { selectCatBreeds, selectIsCatBreedsLoaded } from '../../store/cat-breeds/selectors';
+import { loadCatBreedsReduxThunk } from '../../store/cat-breeds/effects';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -50,9 +54,11 @@ const initialValues: InitialPetData = {
 const AddNewPet = () => {
 	const classes = useStyles();
 	const history = useHistory();
-	const { getAccessTokenSilently } = useAuth0();
-	const [catsBreeds, setCatsBreeds] = useState([]);
-	const [dogsBreeds, setDogsBreeds] = useState([]);
+	const dispatch = useDispatch();
+	const dogBreeds = useSelector(selectDogBreeds);
+	const isDogBreedsLoaded = useSelector(selectIsDogBreedsLoaded);
+	const catBreeds = useSelector(selectCatBreeds);
+	const isCatBreedsLoaded = useSelector(selectIsCatBreedsLoaded);
 
 	const {
 		handleSubmit,
@@ -61,6 +67,8 @@ const AddNewPet = () => {
 		values,
 		errors,
 		touched,
+		setFieldValue,
+		setValues
 	} = useFormik({
 		initialValues,
 		validationSchema: Yup.object({
@@ -98,25 +106,16 @@ const AddNewPet = () => {
 		}
 	});
 
-	const getCatsBreeds = async () => {
-		const response = await axios.get('/static/cat-breeds');
-		setCatsBreeds(response.data);
-		console.log(response.data);
-	}
-
-	const getDogsBreeds = async () => {
-		const response = await axios.get('/static/dog-breeds');
-		setDogsBreeds(response.data);
-		console.log(response.data);
-	}
-
 	useEffect(() => {
-		getCatsBreeds().then();
-	}, [SPECIES.CAT])
-
-	useEffect(() => {
-		getDogsBreeds().then();
-	}, [SPECIES.DOG])
+		if (values.species === SPECIES.DOG && !isDogBreedsLoaded) {
+			dispatch(getDogBreedsReduxThunk());
+			return;
+		}
+		if (values.species === SPECIES.CAT && !isCatBreedsLoaded) {
+			dispatch(loadCatBreedsReduxThunk());
+			return;
+		}
+	}, [values.species]);
 
 	return (
 
@@ -165,11 +164,20 @@ const AddNewPet = () => {
 						type="breed"
 						label="Breed"
 						onChange={handleChange}
+						/*onChange={(event, newValue) => {
+							setFieldValue("breed", newValue)
+						}}*/
 						onBlur={handleBlur}
 						value={values.breed}
 						error={!!(touched.breed && errors.breed)}
 					>
-
+						{/*TODO: Change Select to Autocomplete */}
+						{/*TODO: виправити на onChange*/}
+						{/*TODO: неактивне поле поки не вибраний species*/}
+						{/*TODO: controlled and uncontrolled components / values*/}
+						{/*TODO: add circular progress to breeds while it downloading if internet connection slow */}
+						{(+values.species === SPECIES.DOG ? dogBreeds : catBreeds)
+							.map((item) => <MenuItem key={item._id}>{item.name}</MenuItem>)}
 					</Select>
 					{touched.breed && errors.breed ? (
 						<div className={classes.errorMessage}>{errors.breed}</div>

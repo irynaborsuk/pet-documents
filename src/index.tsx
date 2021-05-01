@@ -4,6 +4,25 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+import dogBreedsReducer from './store/dog-breeds/reducer';
+import { catBreedsReducer } from './store/cat-breeds/reducer';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import { AppState, Breed } from './types';
+
+export interface RootState {
+	catBreeds: AppState<Breed[]>;
+	dogBreeds: AppState<Breed[]>;
+}
+
+const rootReducer = combineReducers({
+	catBreeds: catBreedsReducer,
+	dogBreeds: dogBreedsReducer,
+})
+
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
 
 ReactDOM.render(
 	<Auth0Provider
@@ -12,7 +31,9 @@ ReactDOM.render(
 		clientId="ghskmgtIoPGnT2184jubYcgiDpfszapY"
 		redirectUri={window.location.origin}
 	>
-		<App/>
+		<Provider store={store}>
+			<App/>
+		</Provider>
 	</Auth0Provider>,
 	document.getElementById('root')
 );

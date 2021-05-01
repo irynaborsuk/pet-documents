@@ -57,7 +57,6 @@ const PetAccount = () => {
 					</Card>
 				)
 			}
-
 		</div>
 
 	);

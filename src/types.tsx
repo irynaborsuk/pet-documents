@@ -30,7 +30,7 @@ export interface InitialPetData {
 	notes?: string
 }
 
-export interface CarouselInfoResponse {
+export interface Breed {
 	_id: string;
 	name: string;
 }
@@ -38,4 +38,11 @@ export interface CarouselInfoResponse {
 export interface CarouselStyleProps {
 	className: string,
 	style: React.CSSProperties
+}
+
+
+export interface AppState<T> {
+	isLoading: boolean;
+	data: T;
+	errorMessage: string;
 }
