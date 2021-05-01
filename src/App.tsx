@@ -7,18 +7,21 @@ import {
 } from 'react-router-dom';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import WelcomePage from './components/WelcomePage';
+import Dashboard from './components/Dashboard';
 import SignInButton from './UI/SignInButton';
 import PetAccount from './containers/PetAccount/PetAccount';
 import NavigationList from './components/NavigationList';
 import AddNewPet from './containers/PetAccount/AddNewPet';
-import { Hidden } from '@material-ui/core';
+import { Avatar, Card, CardActions, CardHeader, Hidden, Menu, MenuItem } from '@material-ui/core';
+import { useAuth0 } from '@auth0/auth0-react';
+import SignOutButton from './UI/SignOutButton';
+import withLocalTheme from './hoc/withLocalTheme';
+import { useAxiosInterceptors } from './hooks/useAxiosInterceptors';
 
 const drawerWidth = 240;
 
@@ -45,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			[theme.breakpoints.up('sm')]: {
 				display: 'none'
 			},
-			color: 'teal'
+			color: theme.palette.primary.main
 		},
 		// necessary for content to be below app bar
 		toolbar: theme.mixins.toolbar,
@@ -62,17 +65,75 @@ const useStyles = makeStyles((theme: Theme) =>
 		content: {
 			flexGrow: 1,
 			padding: theme.spacing(3)
-		}
+		},
+		large: {
+			width: theme.spacing(7),
+			height: theme.spacing(7),
+		},
+		avatarMenuStyles: {
+			display: 'flex',
+			flexDirection: 'column',
+			justifyContent: 'center',
+		},
+		usersStyles: {
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'center',
+		},
 	})
 );
 
 function App() {
+	useAxiosInterceptors();
+
 	const classes = useStyles();
 	const [mobileOpen, setMobileOpen] = React.useState(false);
+	const { user, isAuthenticated } = useAuth0();
+	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const isMenuOpen = Boolean(anchorEl);
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen);
 	};
+
+	const handleAvatarToggle = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	}
+
+	const handleAvatarMenuClose = () => {
+		setAnchorEl(null);
+	};
+
+	const renderMenu = (
+		<Menu
+			anchorEl={anchorEl}
+			anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+			keepMounted
+			transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+			open={isMenuOpen}
+			onClose={handleAvatarMenuClose}
+			onClick={() => setAnchorEl(null)}
+		>
+			<MenuItem className={classes.avatarMenuStyles}>
+
+				{isAuthenticated && (
+					<Card>
+						<CardHeader
+							avatar={
+								<Avatar src={user.picture} alt={user.name} className={classes.large}/>
+							}
+							title={user.name}
+							subheader={user.email}
+						/>
+					</Card>
+				)}
+
+				<CardActions>
+					<SignOutButton/>
+				</CardActions>
+			</MenuItem>
+		</Menu>
+	);
 
 	const drawer = (
 		<div>
@@ -85,7 +146,6 @@ function App() {
 	return (
 		<Router>
 			<div className={classes.root}>
-				<CssBaseline/>
 				<AppBar
 					position="fixed"
 					className={classes.appBar}
@@ -100,7 +160,16 @@ function App() {
 						>
 							<MenuIcon/>
 						</IconButton>
-						<SignInButton/>
+
+						{isAuthenticated ?
+							<MenuItem
+								onClick={handleAvatarToggle}
+							>
+								<Avatar src={user.picture} alt={user.name} />
+							</MenuItem>
+							:
+							<SignInButton/>
+						}
 					</Toolbar>
 				</AppBar>
 				<nav className={classes.drawer} aria-label="mailbox folders">
@@ -136,15 +205,16 @@ function App() {
 					<div className={classes.toolbar}/>
 
 					<Switch>
-						<Route path="/" exact><WelcomePage/></Route>
+						<Route path="/" exact><Dashboard/></Route>
 						<Route path="/pet-account"><PetAccount/></Route>
 						<Route path="/create-pet-form"><AddNewPet/></Route>
 					</Switch>
 
 				</main>
+				{renderMenu}
 			</div>
 		</Router>
 	);
 }
 
-export default App;
+export default withLocalTheme(App);

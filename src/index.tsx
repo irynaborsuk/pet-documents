@@ -3,20 +3,39 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { Auth0Provider } from "@auth0/auth0-react";
+import { Auth0Provider } from '@auth0/auth0-react';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+import dogBreedsReducer from './store/dog-breeds/reducer';
+import { catBreedsReducer } from './store/cat-breeds/reducer';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import { AppState, Breed } from './types';
+
+export interface RootState {
+	catBreeds: AppState<Breed[]>;
+	dogBreeds: AppState<Breed[]>;
+}
+
+const rootReducer = combineReducers({
+	catBreeds: catBreedsReducer,
+	dogBreeds: dogBreedsReducer,
+})
+
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
 
 ReactDOM.render(
-  <React.StrictMode>
-      <Auth0Provider
-          domain="pet-documents.eu.auth0.com"
-          audience="https://pet-documents.eu.auth0.com/api/v2/"
-          clientId="ghskmgtIoPGnT2184jubYcgiDpfszapY"
-          redirectUri={window.location.origin}
-      >
-          <App />
-      </Auth0Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
+	<Auth0Provider
+		domain="pet-documents.eu.auth0.com"
+		audience="https://pet-documents.eu.auth0.com/api/v2/"
+		clientId="ghskmgtIoPGnT2184jubYcgiDpfszapY"
+		redirectUri={window.location.origin}
+	>
+		<Provider store={store}>
+			<App/>
+		</Provider>
+	</Auth0Provider>,
+	document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function
