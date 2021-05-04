@@ -27,7 +27,11 @@ export interface InitialPetData {
 		value: SPECIES | string | null;
 	} | null, // if you got complex object as a type for some area - you need also add a | null (if the field gonna be empty)
 	breed: string,
-	gender: GENDER | '',
+	//gender: GENDER | '',
+	gender: {
+		label: string;
+		value: GENDER | string | null;
+	} | null,
 	dateOfBirth: string,
 	colour?: string,
 	notes?: string
@@ -53,4 +57,9 @@ export interface AppState<T> {
 export interface ISpeciesOptions {
 	label: string;
 	value: SPECIES;
+}
+
+export interface IGenderOptions {
+	label: string;
+	value: GENDER;
 }

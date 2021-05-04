@@ -1,5 +1,13 @@
 import React, { useEffect } from 'react';
-import { GENDER, getGenderLabel, getSpeciesLabel, InitialPetData, ISpeciesOptions, SPECIES } from '../../types';
+import {
+	GENDER,
+	getGenderLabel,
+	getSpeciesLabel,
+	IGenderOptions,
+	InitialPetData,
+	ISpeciesOptions,
+	SPECIES
+} from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { createStyles, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
@@ -46,7 +54,7 @@ const initialValues: InitialPetData = {
 	name: '',
 	species: null,
 	breed: '',
-	gender: '',
+	gender: null,
 	dateOfBirth: '',
 	colour: '',
 	notes: ''
@@ -55,6 +63,11 @@ const initialValues: InitialPetData = {
 const speciesOptions: ISpeciesOptions[] = [
 	{ label: getSpeciesLabel[SPECIES.CAT], value: SPECIES.CAT },
 	{ label: getSpeciesLabel[SPECIES.DOG], value: SPECIES.DOG }
+]
+
+const genderOptions: IGenderOptions[] = [
+	{ label: getGenderLabel[GENDER.MALE], value: GENDER.MALE },
+	{ label: getGenderLabel[GENDER.FEMALE], value: GENDER.FEMALE }
 ]
 
 const AddNewPet = () => {
@@ -92,7 +105,8 @@ const AddNewPet = () => {
 				.matches(/[a-zA-Z]/, 'Breed must contain Latin letters.')
 				.max(40, 'Must be 40 characters or less')
 				.required('Required'),
-			gender: Yup.number()
+			gender: Yup.object()
+				.nullable()
 				.required('Required'),
 			dateOfBirth: Yup.string()
 				.required('Required'),
@@ -102,11 +116,12 @@ const AddNewPet = () => {
 		}),
 		onSubmit: async (values) => {
 			const selectedSpecies: SPECIES = Number.parseInt(values.species?.value?.toString() || '');
+			const selectedGender: GENDER = Number.parseInt(values.gender?.value?.toString() || '');
 			const data = {
 				name: values.name,
 				species: selectedSpecies,
 				breed: values.breed,
-				gender: values.gender,
+				gender: selectedGender,
 				dateOfBirth: values.dateOfBirth,
 				colour: values.colour,
 				notes: values.notes
@@ -199,24 +214,26 @@ const AddNewPet = () => {
 			</FormControl>
 
 			<FormControl variant="outlined" className={classes.formControl}>
-				<InputLabel>Gender</InputLabel>
-				<Select
-					labelId="demo-simple-select-outlined-label"
-					id="demo-simple-select-outlined"
-					name="gender"
-					type="gender"
-					label="Gender"
-					onChange={handleChange}
-					onBlur={handleBlur}
+				<Autocomplete
 					value={values.gender}
-					error={!!(touched.gender && errors.gender)}
-				>
-					<MenuItem value={GENDER.MALE}>{<>{getGenderLabel[GENDER.MALE]}</>}</MenuItem>
-					<MenuItem value={GENDER.FEMALE}>{<>{getGenderLabel[GENDER.FEMALE]}</>}</MenuItem>
-				</Select>
-				{touched.gender && errors.gender ? (
-					<div className={classes.errorMessage}>{errors.gender}</div>
-				) : null}
+					onChange={(event, newValue: any) => {
+						setFieldValue('gender', newValue);
+					}}
+					options={genderOptions}
+					getOptionLabel={(option) => option.label}
+					getOptionSelected={(option, value) => option.label === value.label}
+					renderInput={(params) =>
+						<TextField
+							{...params}
+							label="Gender"
+							variant="outlined"
+							name="gender"
+							onBlur={handleBlur}
+							value={values.gender}
+							error={!!(touched.gender && errors.gender)}
+							helperText={errors.gender}
+						/>}
+				/>
 			</FormControl>
 
 			<TextField
