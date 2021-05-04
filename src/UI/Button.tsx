@@ -33,6 +33,7 @@ type ButtonProps = {
 	color: string;
 	height?: string;
 	width?: string;
+	margin?: string;
 }
 
 export const Button: React.FC<ButtonProps> = (
@@ -43,7 +44,8 @@ export const Button: React.FC<ButtonProps> = (
 		backgroundColor,
 		color,
 		height,
-		width
+		width,
+		margin
 	}) => {
 
 	const classes = useStyles();
@@ -57,7 +59,8 @@ export const Button: React.FC<ButtonProps> = (
 				backgroundColor: backgroundColor,
 				color: color,
 				height: height,
-				width: width
+				width: width,
+				margin: margin
 			}}
 		>
 			{name}
