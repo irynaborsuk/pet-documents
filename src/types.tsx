@@ -22,7 +22,10 @@ export const getGenderLabel = {
 
 export interface InitialPetData {
 	name: string,
-	species: SPECIES | '',
+	species: {
+		label: string;
+		value: SPECIES | string | null;
+	} | null, // if you got complex object as a type for some area - you need also add a | null (if the field gonna be empty)
 	breed: string,
 	gender: GENDER | '',
 	dateOfBirth: string,
@@ -45,4 +48,9 @@ export interface AppState<T> {
 	isLoading: boolean;
 	data: T;
 	errorMessage: string;
+}
+
+export interface ISpeciesOptions {
+	label: string;
+	value: SPECIES;
 }
