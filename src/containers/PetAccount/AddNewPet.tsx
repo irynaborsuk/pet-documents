@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react';
 import {
+	AutocompleteOption,
 	GENDER,
 	getGenderLabel,
 	getSpeciesLabel,
-	IGenderOptions,
 	InitialPetData,
-	ISpeciesOptions,
 	SPECIES
 } from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { createStyles, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
+import { createStyles, FormControl, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
@@ -53,19 +52,19 @@ const useStyles = makeStyles((theme: Theme) =>
 const initialValues: InitialPetData = {
 	name: '',
 	species: null,
-	breed: '',
+	breed: null,
 	gender: null,
 	dateOfBirth: '',
 	colour: '',
 	notes: ''
 }
 
-const speciesOptions: ISpeciesOptions[] = [
+const speciesOptions: AutocompleteOption<SPECIES>[] = [
 	{ label: getSpeciesLabel[SPECIES.CAT], value: SPECIES.CAT },
 	{ label: getSpeciesLabel[SPECIES.DOG], value: SPECIES.DOG }
 ]
 
-const genderOptions: IGenderOptions[] = [
+const genderOptions: AutocompleteOption<GENDER>[] = [
 	{ label: getGenderLabel[GENDER.MALE], value: GENDER.MALE },
 	{ label: getGenderLabel[GENDER.FEMALE], value: GENDER.FEMALE }
 ]
@@ -101,9 +100,8 @@ const AddNewPet = () => {
 			species: Yup.object()
 				.nullable() // you need .nullable() if initialState has type of null (to show appropriate error massage at least)
 				.required("Required"),
-			breed: Yup.string()
-				.matches(/[a-zA-Z]/, 'Breed must contain Latin letters.')
-				.max(40, 'Must be 40 characters or less')
+			breed: Yup.object()
+				.nullable()
 				.required('Required'),
 			gender: Yup.object()
 				.nullable()
@@ -184,35 +182,39 @@ const AddNewPet = () => {
 				/>
 			</FormControl>
 
-			<FormControl variant="outlined" className={classes.formControl}>
-				<InputLabel>Pet's Breed</InputLabel>
-				<Select
-					labelId="demo-simple-select-outlined-label"
-					id="demo-simple-select-outlined"
-					name="breed"
-					type="breed"
-					label="Breed"
-					onChange={handleChange}
-					/*onChange={(event, newValue) => {
-						setFieldValue("breed", newValue)
-					}}*/
-					onBlur={handleBlur}
-					value={values.breed}
-					error={!!(touched.breed && errors.breed)}
-				>
-					{/*TODO: Change Select to Autocomplete */}
-					{/*TODO: виправити на onChange*/}
-					{/*TODO: неактивне поле поки не вибраний species*/}
-					{/*TODO: controlled and uncontrolled components / values*/}
-					{/*TODO: add circular progress to breeds while it downloading if internet connection slow */}
-					{(+(values?.species ? values.species : '') === SPECIES.DOG ? dogBreeds : catBreeds)
-						.map((item) => <MenuItem key={item._id}>{item.name}</MenuItem>)}
-				</Select>
-				{touched.breed && errors.breed ? (
-					<div className={classes.errorMessage}>{errors.breed}</div>
-				) : null}
-			</FormControl>
 
+			<FormControl variant="outlined" className={classes.formControl}>
+				<Autocomplete
+					value={values.breed}
+					onChange={(event, newValue: any) => {
+						setFieldValue('breed', newValue);
+					}}
+					options={(+(values?.species ? values.species : '') === SPECIES.DOG ? dogBreeds : catBreeds).map(({_id, name}) => {
+						return {
+							label: name,
+							value: _id
+						}
+					})}
+					getOptionLabel={(option) => option.label}
+					getOptionSelected={(option, value) => option.label === value.label}
+					renderInput={(params) =>
+						<TextField
+							{...params}
+							label="Pet Breed"
+							variant="outlined"
+							name="breed"
+							onBlur={handleBlur}
+							value={values.breed}
+							error={!!(touched.breed && errors.breed)}
+							helperText={errors.breed}
+						/>}
+				/>
+			</FormControl>
+			{/*TODO: Change Select to Autocomplete */}
+			{/*TODO: виправити на onChange*/}
+			{/*TODO: неактивне поле поки не вибраний species*/}
+			{/*TODO: controlled and uncontrolled components / values*/}
+			{/*TODO: add circular progress to breeds while it downloading if internet connection slow */}
 			<FormControl variant="outlined" className={classes.formControl}>
 				<Autocomplete
 					value={values.gender}

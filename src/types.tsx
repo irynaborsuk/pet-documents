@@ -22,19 +22,17 @@ export const getGenderLabel = {
 
 export interface InitialPetData {
 	name: string,
-	species: {
-		label: string;
-		value: SPECIES | string | null;
-	} | null, // if you got complex object as a type for some area - you need also add a | null (if the field gonna be empty)
-	breed: string,
-	//gender: GENDER | '',
-	gender: {
-		label: string;
-		value: GENDER | string | null;
-	} | null,
+	species: AutocompleteOption<SPECIES> | null, // if you got complex object as a type for some area - you need also add a | null (if the field gonna be empty)
+	breed: AutocompleteOption<string> | null,
+	gender: AutocompleteOption<GENDER> | null,
 	dateOfBirth: string,
 	colour?: string,
 	notes?: string
+}
+
+export interface AutocompleteOption<T> {
+	label: string;
+	value: T;
 }
 
 export interface Breed {
@@ -52,14 +50,4 @@ export interface AppState<T> {
 	isLoading: boolean;
 	data: T;
 	errorMessage: string;
-}
-
-export interface ISpeciesOptions {
-	label: string;
-	value: SPECIES;
-}
-
-export interface IGenderOptions {
-	label: string;
-	value: GENDER;
 }
