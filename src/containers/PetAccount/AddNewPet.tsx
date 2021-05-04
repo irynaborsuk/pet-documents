@@ -13,13 +13,13 @@ import { createStyles, FormControl, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
-import axios from '../../hooks/useAxiosInterceptors';
 import { useHistory } from 'react-router';
 import { getDogBreedsReduxThunk } from '../../store/dog-breeds/effects';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectDogBreeds, selectIsDogBreedsLoaded } from '../../store/dog-breeds/selectors';
 import { selectCatBreeds, selectIsCatBreedsLoaded } from '../../store/cat-breeds/selectors';
 import { loadCatBreedsReduxThunk } from '../../store/cat-breeds/effects';
+import authorizedAxios from '../../hooks/useAxiosInterceptors';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		buttonsGroup: {
 			display: 'flex',
-			justifyContent: 'space-between'
+			justifyContent: 'space-between',
 		},
 		errorMessage: {
 			color: theme.palette.error.main
@@ -89,7 +89,8 @@ const AddNewPet = () => {
 		setStatus,
 		setFieldTouched,
 		setFieldValue,
-		setValues
+		setValues,
+		resetForm
 	} = useFormik({
 		initialValues,
 		validationSchema: Yup.object({
@@ -118,15 +119,17 @@ const AddNewPet = () => {
 			const data = {
 				name: values.name,
 				species: selectedSpecies,
-				breed: values.breed,
+				breed: values.breed?.value,
 				gender: selectedGender,
 				dateOfBirth: values.dateOfBirth,
 				colour: values.colour,
 				notes: values.notes
 			}
-			axios.post('/pet/create', data)
+			await authorizedAxios.post('/pet/create', data)
 				.then((response) => {
 					console.log(response.data);
+					{/*TODO: що далі з response.data) робити*/}
+					resetForm();
 				})
 		}
 	});
@@ -210,11 +213,12 @@ const AddNewPet = () => {
 						/>}
 				/>
 			</FormControl>
-			{/*TODO: Change Select to Autocomplete */}
-			{/*TODO: виправити на onChange*/}
+
+			{/*TODO: Dog breed nas nno options - fix*/}
 			{/*TODO: неактивне поле поки не вибраний species*/}
 			{/*TODO: controlled and uncontrolled components / values*/}
 			{/*TODO: add circular progress to breeds while it downloading if internet connection slow */}
+
 			<FormControl variant="outlined" className={classes.formControl}>
 				<Autocomplete
 					value={values.gender}
@@ -284,25 +288,38 @@ const AddNewPet = () => {
 			/>
 
 			<div className={[classes.formControl, classes.buttonsGroup].join(' ')}>
-				<Button
-					name={'Cancel'}
-					type={'button'}
-					onClick={() => {
-						history.push('/pet-account')
-					}}
-					backgroundColor={'var(--color-basic-grey)'}
-					color={'var(--color-bright-red)'}
-					height={'56px'}
-					width={'45%'}
-				/>
-				<Button
-					name={'Create'}
-					type={'submit'}
-					backgroundColor={'var(--color-basic-green)'}
-					color={'var(--color-basic-grey)'}
-					height={'56px'}
-					width={'46%'}
-				/>
+				<div className={classes.buttonsGroup}>
+					<Button
+						name={'Reset'}
+						type={'reset'}
+						onClick={() => resetForm()}
+						backgroundColor={'var(--color-basic-yellow)'}
+						color={'var(--color-basic-grey)'}
+						height={'56px'}
+					/>
+				</div>
+
+				<div className={classes.buttonsGroup}>
+					<Button
+						name={'Cancel'}
+						type={'button'}
+						onClick={() => {
+							history.push('/pet-account')
+						}}
+						backgroundColor={'var(--color-basic-grey)'}
+						color={'var(--color-bright-red)'}
+						height={'56px'}
+						margin={'0 10px'}
+					/>
+
+					<Button
+						name={'Create'}
+						type={'submit'}
+						backgroundColor={'var(--color-basic-green)'}
+						color={'var(--color-basic-grey)'}
+						height={'56px'}
+					/>
+				</div>
 			</div>
 
 		</form>
