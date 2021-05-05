@@ -22,5 +22,10 @@ export const selectIsCatBreedsLoaded = createSelector(
 	(state: AppState<Breed[]>) => !!state.data.length && !state.isLoading
 )
 
+export const selectIsCatBreedsLoading = createSelector(
+	getState,
+	(state: AppState<Breed[]>) => state.isLoading
+)
+
 // Component
 // const catBreeds: AppState<Breed[] | null> = useSelect(selectCatBreeds);

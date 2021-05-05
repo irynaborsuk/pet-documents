@@ -9,17 +9,19 @@ import {
 } from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { createStyles, FormControl, TextField } from '@material-ui/core';
+import { CircularProgress, createStyles, FormControl, InputAdornment, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
 import { useHistory } from 'react-router';
 import { getDogBreedsReduxThunk } from '../../store/dog-breeds/effects';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectDogBreeds, selectIsDogBreedsLoaded } from '../../store/dog-breeds/selectors';
-import { selectCatBreeds, selectIsCatBreedsLoaded } from '../../store/cat-breeds/selectors';
+import { selectDogBreeds, selectIsDogBreedsLoaded, selectIsDogBreedsLoading } from '../../store/dog-breeds/selectors';
+import { selectCatBreeds, selectIsCatBreedsLoaded, selectIsCatBreedsLoading } from '../../store/cat-breeds/selectors';
 import { loadCatBreedsReduxThunk } from '../../store/cat-breeds/effects';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
+import DeleteIcon from '@material-ui/icons/Delete';
+
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -36,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		buttonsGroup: {
 			display: 'flex',
-			justifyContent: 'space-between',
+			justifyContent: 'space-between'
 		},
 		errorMessage: {
 			color: theme.palette.error.main
@@ -77,6 +79,8 @@ const AddNewPet = () => {
 	const isDogBreedsLoaded = useSelector(selectIsDogBreedsLoaded);
 	const catBreeds = useSelector(selectCatBreeds);
 	const isCatBreedsLoaded = useSelector(selectIsCatBreedsLoaded);
+	const isCatBreedsLoading = useSelector(selectIsCatBreedsLoading);
+	const isDogBreedsLoading = useSelector(selectIsDogBreedsLoading);
 
 	const {
 		handleSubmit,
@@ -85,11 +89,7 @@ const AddNewPet = () => {
 		values,
 		errors,
 		touched,
-		setErrors,
-		setStatus,
-		setFieldTouched,
 		setFieldValue,
-		setValues,
 		resetForm
 	} = useFormik({
 		initialValues,
@@ -100,7 +100,7 @@ const AddNewPet = () => {
 				.required('Required'),
 			species: Yup.object()
 				.nullable() // you need .nullable() if initialState has type of null (to show appropriate error massage at least)
-				.required("Required"),
+				.required('Required'),
 			breed: Yup.object()
 				.nullable()
 				.required('Required'),
@@ -128,18 +128,20 @@ const AddNewPet = () => {
 			await authorizedAxios.post('/pet/create', data)
 				.then((response) => {
 					console.log(response.data);
-					{/*TODO: що далі з response.data) робити*/}
+					{/*TODO: що далі з response.data) робити*/
+					}
 					resetForm();
 				})
 		}
 	});
 
 	useEffect(() => {
-		if (values.species?.value === SPECIES.DOG && !isDogBreedsLoaded) {
+		const selectedSpecies = values.species?.value?.toString() ?? '';
+		if (Number.parseInt(selectedSpecies) === SPECIES.DOG && !isDogBreedsLoaded) {
 			dispatch(getDogBreedsReduxThunk());
 			return;
 		}
-		if (values.species?.value === SPECIES.CAT && !isCatBreedsLoaded) {
+		if (Number.parseInt(selectedSpecies) === SPECIES.CAT && !isCatBreedsLoaded) {
 			dispatch(loadCatBreedsReduxThunk());
 			return;
 		}
@@ -167,6 +169,7 @@ const AddNewPet = () => {
 					value={values.species}
 					onChange={(event, newValue: any) => {
 						setFieldValue('species', newValue);
+						setFieldValue('breed', null);
 					}}
 					options={speciesOptions}
 					getOptionLabel={(option) => option.label}
@@ -185,14 +188,16 @@ const AddNewPet = () => {
 				/>
 			</FormControl>
 
-
 			<FormControl variant="outlined" className={classes.formControl}>
 				<Autocomplete
 					value={values.breed}
 					onChange={(event, newValue: any) => {
 						setFieldValue('breed', newValue);
 					}}
-					options={(+(values?.species ? values.species : '') === SPECIES.DOG ? dogBreeds : catBreeds).map(({_id, name}) => {
+					options={(+(values?.species ? values.species.value : '') === SPECIES.DOG ? dogBreeds : catBreeds).map(({
+																															   _id,
+																															   name
+																														   }) => {
 						return {
 							label: name,
 							value: _id
@@ -210,14 +215,24 @@ const AddNewPet = () => {
 							value={values.breed}
 							error={!!(touched.breed && errors.breed)}
 							helperText={touched.breed && errors.breed}
+							InputProps={{
+								...params.InputProps,
+								endAdornment: (
+									<>
+										{params.InputProps.endAdornment}
+										{isCatBreedsLoading || isDogBreedsLoading ? <div>
+											<InputAdornment position="end">
+												<CircularProgress/>
+											</InputAdornment>
+										</div> : <></>}
+									</>
+								)
+							}}
 						/>}
 				/>
 			</FormControl>
 
-			{/*TODO: Dog breed nas nno options - fix*/}
-			{/*TODO: неактивне поле поки не вибраний species*/}
 			{/*TODO: controlled and uncontrolled components / values*/}
-			{/*TODO: add circular progress to breeds while it downloading if internet connection slow */}
 
 			<FormControl variant="outlined" className={classes.formControl}>
 				<Autocomplete
@@ -313,7 +328,6 @@ const AddNewPet = () => {
 						margin={'0 10px'}
 						padding={'0 20px'}
 					/>
-
 					<Button
 						name={'Create'}
 						type={'submit'}
@@ -324,9 +338,7 @@ const AddNewPet = () => {
 					/>
 				</div>
 			</div>
-
 		</form>
-
 	);
 };
 
