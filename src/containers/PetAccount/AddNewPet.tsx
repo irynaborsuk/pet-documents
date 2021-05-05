@@ -159,7 +159,7 @@ const AddNewPet = () => {
 				onBlur={handleBlur}
 				value={values.name}
 				error={!!(touched.name && errors.name)}
-				helperText={errors.name}
+				helperText={touched.name && errors.name}
 			/>
 
 			<FormControl variant="outlined" className={classes.formControl}>
@@ -180,7 +180,7 @@ const AddNewPet = () => {
 							onBlur={handleBlur}
 							value={values.species}
 							error={!!(touched.species && errors.species)}
-							helperText={errors.species}
+							helperText={touched.species && errors.species}
 						/>}
 				/>
 			</FormControl>
@@ -209,7 +209,7 @@ const AddNewPet = () => {
 							onBlur={handleBlur}
 							value={values.breed}
 							error={!!(touched.breed && errors.breed)}
-							helperText={errors.breed}
+							helperText={touched.breed && errors.breed}
 						/>}
 				/>
 			</FormControl>
@@ -237,7 +237,7 @@ const AddNewPet = () => {
 							onBlur={handleBlur}
 							value={values.gender}
 							error={!!(touched.gender && errors.gender)}
-							helperText={errors.gender}
+							helperText={touched.gender && errors.gender}
 						/>}
 				/>
 			</FormControl>
@@ -256,7 +256,7 @@ const AddNewPet = () => {
 				onBlur={handleBlur}
 				value={values.dateOfBirth}
 				error={!!(touched.dateOfBirth && errors.dateOfBirth)}
-				helperText={errors.dateOfBirth}
+				helperText={touched.dateOfBirth && errors.dateOfBirth}
 			/>
 			<TextField
 				className={classes.formControl}
@@ -269,7 +269,7 @@ const AddNewPet = () => {
 				onBlur={handleBlur}
 				value={values.colour}
 				error={!!(touched.colour && errors.colour)}
-				helperText={errors.colour}
+				helperText={touched.colour && errors.colour}
 			/>
 			<TextField
 				className={classes.formControl}
@@ -284,7 +284,7 @@ const AddNewPet = () => {
 				onBlur={handleBlur}
 				value={values.notes}
 				error={!!(touched.notes && errors.notes)}
-				helperText={errors.notes}
+				helperText={touched.notes && errors.notes}
 			/>
 
 			<div className={[classes.formControl, classes.buttonsGroup].join(' ')}>
@@ -293,9 +293,10 @@ const AddNewPet = () => {
 						name={'Reset'}
 						type={'reset'}
 						onClick={() => resetForm()}
-						backgroundColor={'var(--color-basic-yellow)'}
-						color={'var(--color-basic-grey)'}
+						backgroundColor={'var(--color-basic-yellow-light)'}
+						color={'var(--color-black-rgba)'}
 						height={'56px'}
+						padding={'0 20px'}
 					/>
 				</div>
 
@@ -310,6 +311,7 @@ const AddNewPet = () => {
 						color={'var(--color-bright-red)'}
 						height={'56px'}
 						margin={'0 10px'}
+						padding={'0 20px'}
 					/>
 
 					<Button
@@ -318,6 +320,7 @@ const AddNewPet = () => {
 						backgroundColor={'var(--color-basic-green)'}
 						color={'var(--color-basic-grey)'}
 						height={'56px'}
+						padding={'0 20px'}
 					/>
 				</div>
 			</div>
