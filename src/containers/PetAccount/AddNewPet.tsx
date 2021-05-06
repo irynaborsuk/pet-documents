@@ -20,7 +20,6 @@ import { selectDogBreeds, selectIsDogBreedsLoaded, selectIsDogBreedsLoading } fr
 import { selectCatBreeds, selectIsCatBreedsLoaded, selectIsCatBreedsLoading } from '../../store/cat-breeds/selectors';
 import { loadCatBreedsReduxThunk } from '../../store/cat-breeds/effects';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
-import DeleteIcon from '@material-ui/icons/Delete';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -194,20 +193,17 @@ const AddNewPet = () => {
 					onChange={(event, newValue: any) => {
 						setFieldValue('breed', newValue);
 					}}
-					options={(+(values?.species ? values.species.value : '') === SPECIES.DOG ? dogBreeds : catBreeds).map(({
-																															   _id,
-																															   name
-																														   }) => {
-						return {
-							label: name,
-							value: _id
-						}
-					})}
+					options={(+(values?.species ? values.species.value : '') === SPECIES.DOG ? dogBreeds : catBreeds)
+						.map(({_id, name}) => {
+							return {
+								label: name,
+								value: _id
+							}})}
 					getOptionLabel={(option) => option.label}
 					getOptionSelected={(option, value) => option.label === value.label}
 					renderInput={(params) =>
 						<TextField
-							{...params}
+							{...params} // every time you need necessary rewrite params to the additions
 							label="Pet Breed"
 							variant="outlined"
 							name="breed"
@@ -216,7 +212,7 @@ const AddNewPet = () => {
 							error={!!(touched.breed && errors.breed)}
 							helperText={touched.breed && errors.breed}
 							InputProps={{
-								...params.InputProps,
+								...params.InputProps, // every time you need necessary rewrite params to the additions
 								endAdornment: (
 									<>
 										{params.InputProps.endAdornment}
@@ -231,8 +227,6 @@ const AddNewPet = () => {
 						/>}
 				/>
 			</FormControl>
-
-			{/*TODO: controlled and uncontrolled components / values*/}
 
 			<FormControl variant="outlined" className={classes.formControl}>
 				<Autocomplete
