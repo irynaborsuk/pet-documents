@@ -12,7 +12,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import Dashboard from './components/Dashboard';
+import Dashboard from './containers/Dashboard/Dashboard';
 import SignInButton from './UI/SignInButton';
 import PetAccount from './containers/PetAccount/PetAccount';
 import NavigationList from './components/NavigationList';

@@ -1,5 +1,5 @@
 import React from 'react';
-import CarouselInfo from '../containers/CaruselInfo/CarouselInfo';
+import CarouselInfo from '../CaruselInfo/CarouselInfo';
 
 const Dashboard = () => {
 	return (

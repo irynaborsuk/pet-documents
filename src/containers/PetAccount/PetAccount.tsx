@@ -1,36 +1,37 @@
-import React from 'react';
-import { Card, CardActions, CardHeader, createStyles, IconButton } from '@material-ui/core';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import React, { useEffect } from 'react';
+import { createStyles} from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { useHistory } from 'react-router';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUserHasPets } from '../../store/pets/selectors';
+import { loadPetsReduxThunk } from '../../store/pets/effects';
+import PetsAddCard from '../../components/PetsAddCard';
+import PetsCardsList from '../../components/PetsCardsList';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
 			display: 'flex',
 			justifyContent: 'center'
-
 		},
 		card: {
 			display: 'flex',
 			flexDirection: 'column',
 			width: '100%',
-			maxWidth: '900px',
-		},
-		buttonAction: {
-			justifyContent: 'flex-end'
-		},
-		arrowButton: {
-			color: theme.palette.primary.main
+			maxWidth: '900px'
 		}
 	})
 )
 
 const PetAccount = () => {
 	const classes = useStyles();
-	const history = useHistory();
+	const dispatch = useDispatch();
 	const { isAuthenticated } = useAuth0();
+	const userHasPets: boolean = useSelector(selectUserHasPets);
+
+	useEffect(() => {
+		dispatch(loadPetsReduxThunk());
+	}, [])
 
 	if (!isAuthenticated) {
 		return <h3>Please, sign in first to open a pet account!</h3>;
@@ -40,26 +41,13 @@ const PetAccount = () => {
 		<div className={classes.root}>
 			{
 				isAuthenticated && (
-					<Card className={classes.card}>
-						<CardHeader
-							title="Add a pet"
-						/>
-						<CardActions className={classes.buttonAction}>
-							<IconButton
-								className={classes.arrowButton}
-								onClick={() => {
-									history.push('/create-pet-form')
-								}}
-								aria-label="add to favorites">
-								<ArrowForwardIcon/>
-							</IconButton>
-						</CardActions>
-					</Card>
+					<div className={classes.card}>
+						{!userHasPets ? <PetsAddCard/> : <PetsCardsList/>}
+					</div>
 				)
 			}
 		</div>
-
 	);
-};
+}
 
 export default PetAccount;

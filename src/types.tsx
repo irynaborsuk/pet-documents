@@ -30,6 +30,26 @@ export interface InitialPetData {
 	notes?: string
 }
 
+export interface PetDataResponse {
+	vaccinations: Array<any>,
+	owners: Array<OwnerData>,
+	_id: string,
+	name: string,
+	colour: string,
+	notes: string,
+	species: number,
+	breed: BreedId,
+	gender: number,
+	dateOfBirth: string
+}
+
+export interface OwnerData {
+	user_id: string,
+	email: string,
+	given_name: string,
+	family_name: string
+}
+
 export interface AutocompleteOption<T> {
 	label: string;
 	value: T;
@@ -40,6 +60,10 @@ export interface Breed {
 	name: string;
 }
 
+export interface BreedId extends Breed {
+	__v: number
+}
+
 export interface CarouselStyleProps {
 	className: string,
 	style: React.CSSProperties
@@ -48,6 +72,6 @@ export interface CarouselStyleProps {
 
 export interface AppState<T> {
 	isLoading: boolean;
-	data: T;
-	errorMessage: string;
+	data: T | Array<any>;
+	errorMessage: string | null;
 }

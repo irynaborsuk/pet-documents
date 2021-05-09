@@ -9,17 +9,18 @@ import {
 } from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { createStyles, FormControl, TextField } from '@material-ui/core';
+import { CircularProgress, createStyles, FormControl, InputAdornment, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
 import { useHistory } from 'react-router';
 import { getDogBreedsReduxThunk } from '../../store/dog-breeds/effects';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectDogBreeds, selectIsDogBreedsLoaded } from '../../store/dog-breeds/selectors';
-import { selectCatBreeds, selectIsCatBreedsLoaded } from '../../store/cat-breeds/selectors';
+import { selectDogBreeds, selectIsDogBreedsLoaded, selectIsDogBreedsLoading } from '../../store/dog-breeds/selectors';
+import { selectCatBreeds, selectIsCatBreedsLoaded, selectIsCatBreedsLoading } from '../../store/cat-breeds/selectors';
 import { loadCatBreedsReduxThunk } from '../../store/cat-breeds/effects';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
+
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		buttonsGroup: {
 			display: 'flex',
-			justifyContent: 'space-between',
+			justifyContent: 'space-between'
 		},
 		errorMessage: {
 			color: theme.palette.error.main
@@ -77,6 +78,8 @@ const AddNewPet = () => {
 	const isDogBreedsLoaded = useSelector(selectIsDogBreedsLoaded);
 	const catBreeds = useSelector(selectCatBreeds);
 	const isCatBreedsLoaded = useSelector(selectIsCatBreedsLoaded);
+	const isCatBreedsLoading = useSelector(selectIsCatBreedsLoading);
+	const isDogBreedsLoading = useSelector(selectIsDogBreedsLoading);
 
 	const {
 		handleSubmit,
@@ -85,11 +88,7 @@ const AddNewPet = () => {
 		values,
 		errors,
 		touched,
-		setErrors,
-		setStatus,
-		setFieldTouched,
 		setFieldValue,
-		setValues,
 		resetForm
 	} = useFormik({
 		initialValues,
@@ -100,7 +99,7 @@ const AddNewPet = () => {
 				.required('Required'),
 			species: Yup.object()
 				.nullable() // you need .nullable() if initialState has type of null (to show appropriate error massage at least)
-				.required("Required"),
+				.required('Required'),
 			breed: Yup.object()
 				.nullable()
 				.required('Required'),
@@ -130,16 +129,18 @@ const AddNewPet = () => {
 					console.log(response.data);
 					{/*TODO: що далі з response.data) робити*/}
 					resetForm();
+					history.push('/pet-account');
 				})
 		}
 	});
 
 	useEffect(() => {
-		if (values.species?.value === SPECIES.DOG && !isDogBreedsLoaded) {
+		const selectedSpecies = values.species?.value?.toString() ?? '';
+		if (Number.parseInt(selectedSpecies) === SPECIES.DOG && !isDogBreedsLoaded) {
 			dispatch(getDogBreedsReduxThunk());
 			return;
 		}
-		if (values.species?.value === SPECIES.CAT && !isCatBreedsLoaded) {
+		if (Number.parseInt(selectedSpecies) === SPECIES.CAT && !isCatBreedsLoaded) {
 			dispatch(loadCatBreedsReduxThunk());
 			return;
 		}
@@ -159,7 +160,7 @@ const AddNewPet = () => {
 				onBlur={handleBlur}
 				value={values.name}
 				error={!!(touched.name && errors.name)}
-				helperText={errors.name}
+				helperText={touched.name && errors.name}
 			/>
 
 			<FormControl variant="outlined" className={classes.formControl}>
@@ -167,6 +168,7 @@ const AddNewPet = () => {
 					value={values.species}
 					onChange={(event, newValue: any) => {
 						setFieldValue('species', newValue);
+						setFieldValue('breed', null);
 					}}
 					options={speciesOptions}
 					getOptionLabel={(option) => option.label}
@@ -180,11 +182,10 @@ const AddNewPet = () => {
 							onBlur={handleBlur}
 							value={values.species}
 							error={!!(touched.species && errors.species)}
-							helperText={errors.species}
+							helperText={touched.species && errors.species}
 						/>}
 				/>
 			</FormControl>
-
 
 			<FormControl variant="outlined" className={classes.formControl}>
 				<Autocomplete
@@ -192,32 +193,40 @@ const AddNewPet = () => {
 					onChange={(event, newValue: any) => {
 						setFieldValue('breed', newValue);
 					}}
-					options={(+(values?.species ? values.species : '') === SPECIES.DOG ? dogBreeds : catBreeds).map(({_id, name}) => {
-						return {
-							label: name,
-							value: _id
-						}
-					})}
+					options={(+(values?.species ? values.species.value : '') === SPECIES.DOG ? dogBreeds : catBreeds)
+						.map(({_id, name}) => {
+							return {
+								label: name,
+								value: _id
+							}})}
 					getOptionLabel={(option) => option.label}
 					getOptionSelected={(option, value) => option.label === value.label}
 					renderInput={(params) =>
 						<TextField
-							{...params}
+							{...params} // every time you need necessary rewrite params to the additions
 							label="Pet Breed"
 							variant="outlined"
 							name="breed"
 							onBlur={handleBlur}
 							value={values.breed}
 							error={!!(touched.breed && errors.breed)}
-							helperText={errors.breed}
+							helperText={touched.breed && errors.breed}
+							InputProps={{
+								...params.InputProps, // every time you need necessary rewrite params to the additions
+								endAdornment: (
+									<>
+										{params.InputProps.endAdornment}
+										{isCatBreedsLoading || isDogBreedsLoading ? <div>
+											<InputAdornment position="end">
+												<CircularProgress/>
+											</InputAdornment>
+										</div> : <></>}
+									</>
+								)
+							}}
 						/>}
 				/>
 			</FormControl>
-
-			{/*TODO: Dog breed nas nno options - fix*/}
-			{/*TODO: неактивне поле поки не вибраний species*/}
-			{/*TODO: controlled and uncontrolled components / values*/}
-			{/*TODO: add circular progress to breeds while it downloading if internet connection slow */}
 
 			<FormControl variant="outlined" className={classes.formControl}>
 				<Autocomplete
@@ -237,7 +246,7 @@ const AddNewPet = () => {
 							onBlur={handleBlur}
 							value={values.gender}
 							error={!!(touched.gender && errors.gender)}
-							helperText={errors.gender}
+							helperText={touched.gender && errors.gender}
 						/>}
 				/>
 			</FormControl>
@@ -256,7 +265,7 @@ const AddNewPet = () => {
 				onBlur={handleBlur}
 				value={values.dateOfBirth}
 				error={!!(touched.dateOfBirth && errors.dateOfBirth)}
-				helperText={errors.dateOfBirth}
+				helperText={touched.dateOfBirth && errors.dateOfBirth}
 			/>
 			<TextField
 				className={classes.formControl}
@@ -269,7 +278,7 @@ const AddNewPet = () => {
 				onBlur={handleBlur}
 				value={values.colour}
 				error={!!(touched.colour && errors.colour)}
-				helperText={errors.colour}
+				helperText={touched.colour && errors.colour}
 			/>
 			<TextField
 				className={classes.formControl}
@@ -284,7 +293,7 @@ const AddNewPet = () => {
 				onBlur={handleBlur}
 				value={values.notes}
 				error={!!(touched.notes && errors.notes)}
-				helperText={errors.notes}
+				helperText={touched.notes && errors.notes}
 			/>
 
 			<div className={[classes.formControl, classes.buttonsGroup].join(' ')}>
@@ -293,9 +302,10 @@ const AddNewPet = () => {
 						name={'Reset'}
 						type={'reset'}
 						onClick={() => resetForm()}
-						backgroundColor={'var(--color-basic-yellow)'}
-						color={'var(--color-basic-grey)'}
+						backgroundColor={'var(--color-basic-yellow-light)'}
+						color={'var(--color-black-rgba)'}
 						height={'56px'}
+						padding={'0 20px'}
 					/>
 				</div>
 
@@ -310,20 +320,19 @@ const AddNewPet = () => {
 						color={'var(--color-bright-red)'}
 						height={'56px'}
 						margin={'0 10px'}
+						padding={'0 20px'}
 					/>
-
 					<Button
 						name={'Create'}
 						type={'submit'}
 						backgroundColor={'var(--color-basic-green)'}
 						color={'var(--color-basic-grey)'}
 						height={'56px'}
+						padding={'0 20px'}
 					/>
 				</div>
 			</div>
-
 		</form>
-
 	);
 };
 

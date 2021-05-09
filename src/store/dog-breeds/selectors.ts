@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect'
+import { createSelector } from 'reselect';
 import { AppState, Breed } from '../../types';
 import { RootState } from '../../index';
 
@@ -19,4 +19,8 @@ export const selectDogBreedsError = createSelector(
 export const selectIsDogBreedsLoaded = createSelector(
 	getState,
 	(state: AppState<Breed[]>) => !!state.data.length && !state.isLoading
+)
+export const selectIsDogBreedsLoading = createSelector(
+	getState,
+	(state: AppState<Breed[]>) => state.isLoading
 )
