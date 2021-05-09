@@ -127,9 +127,9 @@ const AddNewPet = () => {
 			await authorizedAxios.post('/pet/create', data)
 				.then((response) => {
 					console.log(response.data);
-					{/*TODO: що далі з response.data) робити*/
-					}
+					{/*TODO: що далі з response.data) робити*/}
 					resetForm();
+					history.push('/pet-account');
 				})
 		}
 	});

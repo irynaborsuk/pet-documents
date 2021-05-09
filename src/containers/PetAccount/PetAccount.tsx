@@ -1,51 +1,36 @@
 import React, { useEffect } from 'react';
-import { Card, CardActions, CardHeader, createStyles, Fab, IconButton } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import { createStyles} from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { useHistory } from 'react-router';
 import { useAuth0 } from '@auth0/auth0-react';
-import authorizedAxios from '../../hooks/useAxiosInterceptors';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUserHasPets } from '../../store/pets/selectors';
+import { loadPetsReduxThunk } from '../../store/pets/effects';
+import PetsAddCard from '../../components/PetsAddCard';
+import PetsCardsList from '../../components/PetsCardsList';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
 			display: 'flex',
 			justifyContent: 'center'
-
 		},
 		card: {
 			display: 'flex',
 			flexDirection: 'column',
 			width: '100%',
-			maxWidth: '900px',
-		},
-		buttonAction: {
-			justifyContent: 'flex-end'
-		},
-		arrowButton: {
-			color: theme.palette.primary.main
-		},
-		addButton: {
-			position: 'fixed',
-			bottom: '20px',
-			right: '20px'
+			maxWidth: '900px'
 		}
 	})
 )
 
 const PetAccount = () => {
 	const classes = useStyles();
-	const history = useHistory();
+	const dispatch = useDispatch();
 	const { isAuthenticated } = useAuth0();
-
-	const getPetsData = async () => {
-		const response = await authorizedAxios.get('/pets');
-		console.log(response.data);
-	}
+	const userHasPets: boolean = useSelector(selectUserHasPets);
 
 	useEffect(() => {
-		getPetsData();
+		dispatch(loadPetsReduxThunk());
 	}, [])
 
 	if (!isAuthenticated) {
@@ -57,37 +42,12 @@ const PetAccount = () => {
 			{
 				isAuthenticated && (
 					<div className={classes.card}>
-						<Card>
-							<CardHeader
-								title="Add a pet"
-							/>
-							<CardActions className={classes.buttonAction}>
-								<IconButton
-									className={classes.arrowButton}
-									onClick={() => {
-										history.push('/create-pet-form')
-									}}
-									aria-label="add to favorites">
-									<ArrowForwardIcon/>
-								</IconButton>
-							</CardActions>
-						</Card>
-
-						<Fab className={classes.addButton} color="primary" aria-label="add">
-							<AddIcon
-
-								onClick={() => {
-									history.push('/create-pet-form')
-								}}
-							/>
-						</Fab>
+						{!userHasPets ? <PetsAddCard/> : <PetsCardsList/>}
 					</div>
-
 				)
 			}
 		</div>
-
 	);
-};
+}
 
 export default PetAccount;
