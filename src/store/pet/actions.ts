@@ -7,7 +7,7 @@ export function loadPet(): PetActionType {
 	}
 }
 
-export function loadPetSuccess(pet: PetDataResponse[]): PetActionType {
+export function loadPetSuccess(pet: PetDataResponse): PetActionType {
 	return {
 		type: LOAD_PET_SUCCESS,
 		payload: pet,

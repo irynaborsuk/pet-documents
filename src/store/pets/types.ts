@@ -1,4 +1,4 @@
-import { PetDataResponse } from '../../types';
+import { PetsResponse } from '../../types';
 
 export const LOAD_PETS = 'LOAD_PETS';
 export const LOAD_PETS_SUCCESS = 'LOAD_PETS_SUCCESS';
@@ -10,7 +10,7 @@ interface LoadPets {
 
 interface LoadPetsSuccess {
 	type: typeof LOAD_PETS_SUCCESS;
-	payload: PetDataResponse[]
+	payload: PetsResponse[]
 }
 
 interface LoadPetsFailure {

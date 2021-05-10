@@ -1,5 +1,5 @@
 import React from 'react';
-import { GENDER, PetDataResponse, SPECIES } from '../types';
+import { GENDER, PetsResponse, SPECIES } from '../types';
 import Grid from '@material-ui/core/Grid';
 import { Card, CardContent, CardHeader, createStyles, Fab } from '@material-ui/core';
 import { calcDate } from '../utils/formatters';
@@ -46,20 +46,17 @@ const useStyles = makeStyles((theme: Theme) =>
 const PetsCardsList = () => {
 	const classes = useStyles();
 	const history = useHistory();
-	const pets: PetDataResponse[] = useSelector(selectPets);
+	const pets: PetsResponse[] = useSelector(selectPets);
 	const currentTime = DateTime.local();
-//	const petDataById: PetDataResponse[] = useSelector(selectPet);
-//	const isPetsLoading = useSelector(selectIsPetsLoading);
 
 	return (
 		<Grid container spacing={2}>
-			{pets.map((pet: PetDataResponse) => {
+			{pets.map((pet: PetsResponse) => {
 				return (
 					<Grid item xs={12} sm={6} key={pet._id}>
 						<Card
 							key={pet._id}
-							// на onClick перенаправляє на іншу сторінку - history.push()
-							//onClick={() => dispatch(loadPetReduxThunk(pet._id))}
+							onClick={() => history.push(`/pet/${pet._id}`)}
 						>
 							<CardHeader title={pet.name}/>
 							<CardContent className={classes.cardContent}>

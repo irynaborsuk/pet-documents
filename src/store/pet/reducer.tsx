@@ -1,9 +1,10 @@
 import { LOAD_PET, LOAD_PET_FAILURE, LOAD_PET_SUCCESS, PetActionType } from './types';
+import { AppState, PetDataResponse } from '../../types';
 
-const initialState = {
+const initialState: AppState<PetDataResponse | null> = {
 	isLoading: false,
-	data: [],
-	errorMessage: null
+	data: null,
+	errorMessage: '',
 }
 
 export default function petReducer(
@@ -15,22 +16,22 @@ export default function petReducer(
 			return {
 				...state,
 				isLoading: true,
-				data: [],
-				error: ''
+				data: null,
+				errorMessage: ''
 			}
 		case LOAD_PET_SUCCESS:
 			return {
 				...state,
 				isLoading: false,
 				data: action.payload,
-				error: null
+				errorMessage: null
 			}
 		case LOAD_PET_FAILURE:
 			return {
 				...state,
 				isLoading: false,
-				data: [],
-				error: action.payload
+				data:  null,
+				errorMessage: action.payload
 			}
 		default:
 			return state

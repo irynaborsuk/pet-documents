@@ -22,6 +22,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import SignOutButton from './UI/SignOutButton';
 import withLocalTheme from './hoc/withLocalTheme';
 import { useAxiosInterceptors } from './hooks/useAxiosInterceptors';
+import PetProfile from './containers/PetAccount/PetProfile';
 
 const drawerWidth = 240;
 
@@ -91,6 +92,7 @@ function App() {
 	const { user, isAuthenticated } = useAuth0();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const isMenuOpen = Boolean(anchorEl);
+	const petID = '';
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen);
@@ -208,6 +210,7 @@ function App() {
 						<Route path="/" exact><Dashboard/></Route>
 						<Route path="/pet-account"><PetAccount/></Route>
 						<Route path="/create-pet-form"><AddNewPet/></Route>
+						<Route path={"/pet/:id"}><PetProfile/></Route>
 					</Switch>
 
 				</main>

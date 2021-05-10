@@ -1,5 +1,5 @@
 import { LOAD_PETS, LOAD_PETS_FAILURE, LOAD_PETS_SUCCESS, PetsActionType } from './types';
-import { PetDataResponse } from '../../types';
+import { PetsResponse } from '../../types';
 
 export function loadPets(): PetsActionType {
 	return {
@@ -7,7 +7,7 @@ export function loadPets(): PetsActionType {
 	}
 }
 
-export function loadPetsSuccess(pets: PetDataResponse[]): PetsActionType {
+export function loadPetsSuccess(pets: PetsResponse[]): PetsActionType {
 	return {
 		type: LOAD_PETS_SUCCESS,
 		payload: pets,

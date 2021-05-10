@@ -106,6 +106,8 @@ const CarouselInfo = () => {
 		getDogsFacts().then();
 	}, [])
 
+	{/*TODO: carousel must be shown even if user is not register*/}
+
 	return (
 		<Carousel
 			autoPlay={false}

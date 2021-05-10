@@ -10,15 +10,15 @@ import { Provider } from 'react-redux';
 import dogBreedsReducer from './store/dog-breeds/reducer';
 import { catBreedsReducer } from './store/cat-breeds/reducer';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { AppState, Breed, PetDataResponse } from './types';
+import { AppState, Breed, PetDataResponse, PetsResponse } from './types';
 import petsReducer from './store/pets/reducer';
 import petReducer from './store/pet/reducer';
 
 export interface RootState {
 	catBreeds: AppState<Breed[]>;
 	dogBreeds: AppState<Breed[]>;
-	pets: AppState<PetDataResponse[]>;
-	pet: AppState<PetDataResponse[]>
+	pets: AppState<PetsResponse[]>;
+	pet: AppState<PetDataResponse | null>
 }
 
 const rootReducer = combineReducers({

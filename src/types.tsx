@@ -30,6 +30,19 @@ export interface InitialPetData {
 	notes?: string
 }
 
+export interface PetsResponse {
+	vaccinations: Array<any>,
+	owners: Array<string>,
+	_id: string,
+	name: string,
+	colour: string,
+	notes: string,
+	species: number,
+	breed: Breed,
+	gender: number,
+	dateOfBirth: string
+}
+
 export interface PetDataResponse {
 	vaccinations: Array<any>,
 	owners: Array<OwnerData>,
@@ -72,6 +85,6 @@ export interface CarouselStyleProps {
 
 export interface AppState<T> {
 	isLoading: boolean;
-	data: T | Array<any>;
-	errorMessage: string | null;
+	data: T;
+	errorMessage: string;
 }

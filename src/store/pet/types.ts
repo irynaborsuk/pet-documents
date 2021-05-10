@@ -10,7 +10,7 @@ interface LoadPet {
 
 interface LoadPetSuccess {
 	type: typeof LOAD_PET_SUCCESS,
-	payload: PetDataResponse[],
+	payload: PetDataResponse,
 }
 
 interface LoadPetFailure {
