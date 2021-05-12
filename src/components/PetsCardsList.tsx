@@ -61,7 +61,7 @@ const PetsCardsList = () => {
 							<CardHeader title={pet.name}/>
 							<CardContent className={classes.cardContent}>
 								<div className={classes.cardContentMain}>
-									<>{calcDate(currentTime, pet.dateOfBirth)}</>
+									<>Age: {calcDate(currentTime, pet.dateOfBirth)}</>
 									<img
 										className={classes.cardContentGenderImg}
 										src={pet.gender === GENDER.FEMALE ? femaleIcon : maleIcon}

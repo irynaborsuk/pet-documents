@@ -45,7 +45,7 @@ export interface PetsResponse {
 
 export interface PetDataResponse {
 	vaccinations: Array<any>,
-	owners: Array<OwnerData>,
+	owners: Array<IOwnerData>,
 	_id: string,
 	name: string,
 	colour: string,
@@ -56,7 +56,7 @@ export interface PetDataResponse {
 	dateOfBirth: string
 }
 
-export interface OwnerData {
+export interface IOwnerData {
 	user_id: string,
 	email: string,
 	given_name: string,
