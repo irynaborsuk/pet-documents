@@ -41,11 +41,6 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		errorMessage: {
 			color: theme.palette.error.main
-		},
-		selectedField: {
-			display: 'flex',
-			flexDirection: 'column',
-			alignItems: 'baseline'
 		}
 	})
 )

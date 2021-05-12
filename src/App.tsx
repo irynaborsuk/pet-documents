@@ -29,7 +29,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
-			display: 'flex'
+			display: 'flex',
 		},
 		drawer: {
 			[theme.breakpoints.up('sm')]: {
@@ -42,14 +42,14 @@ const useStyles = makeStyles((theme: Theme) =>
 				width: `calc(100% - ${drawerWidth}px)`,
 				marginLeft: drawerWidth
 			},
-			backgroundColor: 'white'
+			backgroundColor: theme.palette.primary.main,
 		},
 		menuButton: {
 			marginRight: theme.spacing(2),
 			[theme.breakpoints.up('sm')]: {
 				display: 'none'
 			},
-			color: theme.palette.primary.main
+			color: theme.palette.primary.main,
 		},
 		// necessary for content to be below app bar
 		toolbar: theme.mixins.toolbar,
@@ -61,7 +61,8 @@ const useStyles = makeStyles((theme: Theme) =>
 			}
 		},
 		drawerPaper: {
-			width: drawerWidth
+			width: drawerWidth,
+		//	backgroundColor: theme.palette.primary.main,
 		},
 		content: {
 			flexGrow: 1,

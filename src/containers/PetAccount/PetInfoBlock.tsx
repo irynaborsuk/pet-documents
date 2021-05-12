@@ -3,21 +3,9 @@ import { Card, CardContent, CardHeader, Grid, makeStyles, Typography } from '@ma
 import { DateTime } from 'luxon';
 import { calcDate } from '../../utils/formatters';
 import { createStyles, Theme } from '@material-ui/core/styles';
-import { BreedId, IOwnerData, PetDataResponse } from '../../types';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
-		root: {
-			display: 'flex',
-			justifyContent: 'center'
-		},
-		displayFlex: {
-			display: 'flex'
-		},
-		displayFlexColumn: {
-			display: 'flex',
-			flexDirection: 'column'
-		},
 		typographyAdditionInfo: {
 			display: 'flex'
 		},
