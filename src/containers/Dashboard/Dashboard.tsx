@@ -1,5 +1,6 @@
 import React from 'react';
 import CarouselInfo from '../CaruselInfo/CarouselInfo';
+import LeftDrawerMenu from '../../components/LeftDrawerMenu';
 
 const Dashboard = () => {
 	return (
@@ -10,7 +11,6 @@ const Dashboard = () => {
 			<p>Maybe here will be the page number 2 - Pet Care  and 3 - Feeding</p>
 			<p>Or feeding like notification in header</p>
 			<p>Also here may be a calendar</p>
-
 		</div>
 	);
 };
