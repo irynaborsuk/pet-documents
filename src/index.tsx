@@ -13,12 +13,13 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { AppState, Breed, PetDataResponse, PetsResponse } from './types';
 import petsReducer from './store/pets/reducer';
 import petReducer from './store/pet/reducer';
+import petDeleteReducer from './store/pet-delete/reducer';
 
 export interface RootState {
 	catBreeds: AppState<Breed[]>;
 	dogBreeds: AppState<Breed[]>;
 	pets: AppState<PetsResponse[]>;
-	pet: AppState<PetDataResponse | null>
+	pet: AppState<PetDataResponse | null>;
 }
 
 const rootReducer = combineReducers({
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
 	dogBreeds: dogBreedsReducer,
 	pets: petsReducer,
 	pet: petReducer,
+	petDelete: petDeleteReducer
 })
 
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));

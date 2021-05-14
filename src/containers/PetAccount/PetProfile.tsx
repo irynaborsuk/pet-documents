@@ -90,14 +90,13 @@ const PetProfile = () => {
 					</Grid>
 					<Grid item xs={12} md={4} >
 						<CardActions className={classes.cardActionsStyles}>
-							<PetsActionButtons/>
+							<PetsActionButtons petId={pet._id}/>
 						</CardActions>
 					</Grid>
 				</Grid>
 				{/*TODO: add owners*/}
 				{/*TODO: delete owner*/}
 				{/*TODO: user can edit pet profile*/}
-				{/*TODO: user can delete pet profile*/}
 				<CardContent>
 					<Grid container
 						  justify="center"

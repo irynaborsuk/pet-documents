@@ -1,4 +1,9 @@
-import { LOAD_PET, LOAD_PET_FAILURE, LOAD_PET_SUCCESS, PetActionType } from './types';
+import {
+	LOAD_PET,
+	LOAD_PET_FAILURE,
+	LOAD_PET_SUCCESS,
+	PetActionType
+} from './types';
 import { AppState, PetDataResponse } from '../../types';
 
 const initialState: AppState<PetDataResponse | null> = {
