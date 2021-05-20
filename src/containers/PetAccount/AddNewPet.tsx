@@ -21,9 +21,11 @@ import { selectCatBreeds, selectIsCatBreedsLoaded, selectIsCatBreedsLoading } fr
 import { loadCatBreedsReduxThunk } from '../../store/cat-breeds/effects';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
 import { selectPet } from '../../store/pet/selectors';
-import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider, Picker } from '@material-ui/pickers';
+import LocalizationProvider from '@material-ui/lab';
 import { DateTime } from 'luxon';
 import LuxonUtils from '@date-io/luxon';
+import { Today } from '@material-ui/icons';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -72,8 +74,6 @@ const AddNewPet = () => {
 	const isCatBreedsLoading = useSelector(selectIsCatBreedsLoading);
 	const isDogBreedsLoading = useSelector(selectIsDogBreedsLoading);
 
-	const [value, setValue] = React.useState<Date | null>(null);
-
 	const editMode: boolean = !!id;
 
 	const initialValues: InitialPetData | any = editMode ? {
@@ -81,7 +81,7 @@ const AddNewPet = () => {
 		species: speciesOptions.find(({ value }) => value === pet?.species) || null,
 		breed: null,
 		gender: genderOptions.find(({ value }) => value === pet?.gender) || null,
-		dateOfBirth: pet?.dateOfBirth || '',
+		dateOfBirth: pet?.dateOfBirth || null,
 		colour: pet?.colour || '',
 		notes: pet?.notes || ''
 	} : {
@@ -89,7 +89,7 @@ const AddNewPet = () => {
 		species: null,
 		breed: null,
 		gender: null,
-		dateOfBirth: '',
+		dateOfBirth: null,
 		colour: '',
 		notes: ''
 	}
@@ -276,25 +276,29 @@ const AddNewPet = () => {
 				/>
 			</FormControl>
 
-			<MuiPickersUtilsProvider utils={LuxonUtils}>
-				<KeyboardDatePicker
-					className={classes.formControl}
-					label="Pet's date of birth"
-					format="dd/MM/yyyy"
-					margin="normal"
-					KeyboardButtonProps={{
-						'aria-label': 'change date'
-					}}
-					inputVariant="outlined"
-					id="dateOfBirth"
-					name="dateOfBirth"
-					onChange={handleChange}
-					onBlur={handleBlur}
-					value={values.dateOfBirth}
-					error={!!(touched.dateOfBirth && errors.dateOfBirth)}
-					helperText={touched.dateOfBirth && errors.dateOfBirth}
-				/>
-			</MuiPickersUtilsProvider>
+			<DatePicker
+				className={classes.formControl}
+				showTodayButton
+				label="Pet's date of birth"
+				format="dd/MM/yyyy"
+				margin="normal"
+				inputVariant="outlined"
+				id="date-picker-dialog"
+				name="dateOfBirth"
+				onChange={(newDate) => {
+					setFieldValue('dateOfBirth', newDate);
+				}}
+				value={values.dateOfBirth}
+				error={!!(touched.dateOfBirth && errors.dateOfBirth)}
+				helperText={touched.dateOfBirth && errors.dateOfBirth}
+				InputProps={{
+					endAdornment: (
+						<InputAdornment position="end">
+							<Today/>
+						</InputAdornment>
+					)
+				}}
+			/>
 
 			<TextField
 				className={classes.formControl}

@@ -14,6 +14,8 @@ import { AppState, Breed, PetDataResponse, PetsResponse } from './types';
 import petsReducer from './store/pets/reducer';
 import petReducer from './store/pet/reducer';
 import petDeleteReducer from './store/pet-delete/reducer';
+import LuxonUtils from '@date-io/luxon';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 export interface RootState {
 	catBreeds: AppState<Breed[]>;
@@ -40,7 +42,9 @@ ReactDOM.render(
 		redirectUri={window.location.origin}
 	>
 		<Provider store={store}>
-			<App/>
+			<MuiPickersUtilsProvider utils={LuxonUtils} locale={window.navigator.language}>
+				<App/>
+			</MuiPickersUtilsProvider>
 		</Provider>
 	</Auth0Provider>,
 	document.getElementById('root')
