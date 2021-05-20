@@ -43,6 +43,7 @@ function App() {
 						<Route path="/" exact><Dashboard/></Route>
 						<Route path="/pet-account"><PetAccount/></Route>
 						<Route path="/create-pet-form"><AddNewPet/></Route>
+						<Route path={'/edit-pet/:id'}><AddNewPet/></Route>
 						<Route path={'/pet/:id'}><PetProfile/></Route>
 					</Fragment>
 				</Switch>

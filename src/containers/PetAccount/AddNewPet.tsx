@@ -4,7 +4,7 @@ import {
 	GENDER,
 	getGenderLabel,
 	getSpeciesLabel,
-	InitialPetData,
+	InitialPetData, PetDataResponse,
 	SPECIES
 } from '../../types';
 import { useFormik } from 'formik';
@@ -13,13 +13,17 @@ import { CircularProgress, createStyles, FormControl, InputAdornment, TextField 
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { getDogBreedsReduxThunk } from '../../store/dog-breeds/effects';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectDogBreeds, selectIsDogBreedsLoaded, selectIsDogBreedsLoading } from '../../store/dog-breeds/selectors';
 import { selectCatBreeds, selectIsCatBreedsLoaded, selectIsCatBreedsLoading } from '../../store/cat-breeds/selectors';
 import { loadCatBreedsReduxThunk } from '../../store/cat-breeds/effects';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
+import { selectPet } from '../../store/pet/selectors';
+import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { DateTime } from 'luxon';
+import LuxonUtils from '@date-io/luxon';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -45,16 +49,6 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 )
 
-const initialValues: InitialPetData = {
-	name: '',
-	species: null,
-	breed: null,
-	gender: null,
-	dateOfBirth: '',
-	colour: '',
-	notes: ''
-}
-
 const speciesOptions: AutocompleteOption<SPECIES>[] = [
 	{ label: getSpeciesLabel[SPECIES.CAT], value: SPECIES.CAT },
 	{ label: getSpeciesLabel[SPECIES.DOG], value: SPECIES.DOG }
@@ -68,6 +62,8 @@ const genderOptions: AutocompleteOption<GENDER>[] = [
 const AddNewPet = () => {
 	const classes = useStyles();
 	const history = useHistory();
+	const { id } = useParams<{ id: string }>();
+	const pet: PetDataResponse | null = useSelector(selectPet);
 	const dispatch = useDispatch();
 	const dogBreeds = useSelector(selectDogBreeds);
 	const isDogBreedsLoaded = useSelector(selectIsDogBreedsLoaded);
@@ -75,6 +71,49 @@ const AddNewPet = () => {
 	const isCatBreedsLoaded = useSelector(selectIsCatBreedsLoaded);
 	const isCatBreedsLoading = useSelector(selectIsCatBreedsLoading);
 	const isDogBreedsLoading = useSelector(selectIsDogBreedsLoading);
+
+	const [value, setValue] = React.useState<Date | null>(null);
+
+	const editMode: boolean = !!id;
+
+	const initialValues: InitialPetData | any = editMode ? {
+		name: pet?.name || '',
+		species: speciesOptions.find(({ value }) => value === pet?.species) || null,
+		breed: null,
+		gender: genderOptions.find(({ value }) => value === pet?.gender) || null,
+		dateOfBirth: pet?.dateOfBirth || '',
+		colour: pet?.colour || '',
+		notes: pet?.notes || ''
+	} : {
+		name: '',
+		species: null,
+		breed: null,
+		gender: null,
+		dateOfBirth: '',
+		colour: '',
+		notes: ''
+	}
+
+	const validationSchema = Yup.object({
+		name: Yup.string()
+			.matches(/[a-zA-Z]/, 'Name must contain Latin letters.')
+			.max(40, 'Must be 40 characters or less')
+			.required('Required'),
+		species: Yup.object()
+			.nullable() // you need .nullable() if initialState has type of null (to show appropriate error massage at least)
+			.required('Required'),
+		breed: Yup.object()
+			.nullable()
+			.required('Required'),
+		gender: Yup.object()
+			.nullable()
+			.required('Required'),
+		dateOfBirth: Yup.string()
+			.required('Required'),
+		colour: Yup.string()
+			.matches(/[a-zA-Z]/, 'Animal colour can not be a number, please use Latin letters instead.'),
+		notes: Yup.string()
+	});
 
 	const {
 		handleSubmit,
@@ -87,47 +126,38 @@ const AddNewPet = () => {
 		resetForm
 	} = useFormik({
 		initialValues,
-		validationSchema: Yup.object({
-			name: Yup.string()
-				.matches(/[a-zA-Z]/, 'Name must contain Latin letters.')
-				.max(40, 'Must be 40 characters or less')
-				.required('Required'),
-			species: Yup.object()
-				.nullable() // you need .nullable() if initialState has type of null (to show appropriate error massage at least)
-				.required('Required'),
-			breed: Yup.object()
-				.nullable()
-				.required('Required'),
-			gender: Yup.object()
-				.nullable()
-				.required('Required'),
-			dateOfBirth: Yup.string()
-				.required('Required'),
-			colour: Yup.string()
-				.matches(/[a-zA-Z]/, 'Animal colour can not be a number, please use Latin letters instead.'),
-			notes: Yup.string()
-		}),
-		onSubmit: async (values) => {
-			const selectedSpecies: SPECIES = Number.parseInt(values.species?.value?.toString() || '');
-			const selectedGender: GENDER = Number.parseInt(values.gender?.value?.toString() || '');
-			const data = {
-				name: values.name,
-				species: selectedSpecies,
-				breed: values.breed?.value,
-				gender: selectedGender,
-				dateOfBirth: values.dateOfBirth,
-				colour: values.colour,
-				notes: values.notes
-			}
-			await authorizedAxios.post('/pet/create', data)
-				.then((response) => {
-					console.log(response.data);
-					{/*TODO: що далі з response.data) робити*/}
-					resetForm();
-					history.push('/pet-account');
-				})
+		validationSchema,
+		enableReinitialize: true,
+		onSubmit: (ev) => {
+			return !editMode ? createPet(ev) : updatePet(id, ev)
 		}
 	});
+
+	const createPet = async (values: InitialPetData) => {
+		const selectedSpecies: SPECIES = Number.parseInt(values.species?.value?.toString() || '');
+		const selectedGender: GENDER = Number.parseInt(values.gender?.value?.toString() || '');
+		const data = {
+			name: values.name,
+			species: selectedSpecies,
+			breed: values.breed?.value,
+			gender: selectedGender,
+			dateOfBirth: values.dateOfBirth,
+			colour: values.colour,
+			notes: values.notes
+		}
+		await authorizedAxios.post('/pet/create', data)
+			.then((response) => {
+				console.log(response.data);
+				{/*TODO: що далі з response.data) робити*/
+				}
+				resetForm();
+				history.push('/pet-account');
+			})
+	}
+
+	const updatePet = (id: string, values: InitialPetData) => {
+
+	}
 
 	useEffect(() => {
 		const selectedSpecies = values.species?.value?.toString() ?? '';
@@ -144,6 +174,7 @@ const AddNewPet = () => {
 	return (
 
 		<form onSubmit={handleSubmit} className={classes.form}>
+			{editMode ? <h3>Edit pet's account</h3> : null}
 			<TextField
 				className={classes.formControl}
 				label="Pet's Name"
@@ -189,13 +220,13 @@ const AddNewPet = () => {
 						setFieldValue('breed', newValue);
 					}}
 					options={(+(values?.species ? values.species.value : '') === SPECIES.DOG ? dogBreeds : catBreeds)
-						.map(({_id, name}) => {
+						.map(({ _id, name }) => {
 							return {
 								label: name,
 								value: _id
-							}})}
+							}
+						})}
 					getOptionLabel={(option) => option.label}
-					getOptionSelected={(option, value) => option.label === value.label}
 					renderInput={(params) =>
 						<TextField
 							{...params} // every time you need necessary rewrite params to the additions
@@ -231,7 +262,6 @@ const AddNewPet = () => {
 					}}
 					options={genderOptions}
 					getOptionLabel={(option) => option.label}
-					getOptionSelected={(option, value) => option.label === value.label}
 					renderInput={(params) =>
 						<TextField
 							{...params}
@@ -246,22 +276,26 @@ const AddNewPet = () => {
 				/>
 			</FormControl>
 
-			<TextField
-				className={classes.formControl}
-				label="Pet's date of birth"
-				InputLabelProps={{
-					shrink: true
-				}}
-				variant="outlined"
-				id="dateOfBirth"
-				name="dateOfBirth"
-				type="date"
-				onChange={handleChange}
-				onBlur={handleBlur}
-				value={values.dateOfBirth}
-				error={!!(touched.dateOfBirth && errors.dateOfBirth)}
-				helperText={touched.dateOfBirth && errors.dateOfBirth}
-			/>
+			<MuiPickersUtilsProvider utils={LuxonUtils}>
+				<KeyboardDatePicker
+					className={classes.formControl}
+					label="Pet's date of birth"
+					format="dd/MM/yyyy"
+					margin="normal"
+					KeyboardButtonProps={{
+						'aria-label': 'change date'
+					}}
+					inputVariant="outlined"
+					id="dateOfBirth"
+					name="dateOfBirth"
+					onChange={handleChange}
+					onBlur={handleBlur}
+					value={values.dateOfBirth}
+					error={!!(touched.dateOfBirth && errors.dateOfBirth)}
+					helperText={touched.dateOfBirth && errors.dateOfBirth}
+				/>
+			</MuiPickersUtilsProvider>
+
 			<TextField
 				className={classes.formControl}
 				label="Animal Colour"
@@ -309,7 +343,9 @@ const AddNewPet = () => {
 						name={'Cancel'}
 						type={'button'}
 						onClick={() => {
-							history.push('/pet-account')
+							editMode ?
+								history.push(`/pet/${pet?._id}`) :
+								history.push('/pet-account')
 						}}
 						backgroundColor={'var(--color-basic-grey)'}
 						color={'var(--color-bright-red)'}
@@ -318,7 +354,7 @@ const AddNewPet = () => {
 						padding={'0 20px'}
 					/>
 					<Button
-						name={'Create'}
+						name={!editMode ? 'Create' : 'Update'}
 						type={'submit'}
 						backgroundColor={'var(--color-basic-green)'}
 						color={'var(--color-basic-grey)'}
@@ -328,6 +364,7 @@ const AddNewPet = () => {
 				</div>
 			</div>
 		</form>
+
 	);
 };
 

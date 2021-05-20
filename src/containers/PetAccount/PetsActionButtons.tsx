@@ -53,12 +53,14 @@ const PetsActionButtons = ({ petId }: any) => {
 				</IconButton>
 			</Tooltip>
 			<Tooltip title={'Edit pet profile'}>
-				<IconButton>
-					<Edit
-						className={classes.actionIconStyles}/>
+				<IconButton
+					onClick={() => history.push(`/edit-pet/${petId}`)}
+				>
+					<Edit className={classes.actionIconStyles}/>
 				</IconButton>
 			</Tooltip>
 			<Tooltip title={'Delete pet profile'}>
+				{/*<><DeletePet petId={petId}/></>*/}
 				<>
 					<IconButton onClick={handleClickOpen}>
 						<DeleteForever className={classes.actionIconStyles}/>
@@ -72,7 +74,7 @@ const PetsActionButtons = ({ petId }: any) => {
 						<DialogTitle id="alert-dialog-title">{"Delete pet's account?"}</DialogTitle>
 						<DialogContent>
 							<DialogContentText id="alert-dialog-description">
-								Warning! When you delete a pet's account, this action cannot be undone.
+								Warning! When you delete a pet's account, this action can not be undone.
 								Do you want to continue?
 							</DialogContentText>
 						</DialogContent>
