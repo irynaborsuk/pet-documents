@@ -4,7 +4,8 @@ import {
 	GENDER,
 	getGenderLabel,
 	getSpeciesLabel,
-	InitialPetData, PetDataResponse,
+	InitialPetData,
+	PetDataResponse,
 	SPECIES
 } from '../../types';
 import { useFormik } from 'formik';
@@ -16,15 +17,20 @@ import { Button } from '../../UI/Button';
 import { useHistory, useParams } from 'react-router';
 import { getDogBreedsReduxThunk } from '../../store/dog-breeds/effects';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectDogBreeds, selectIsDogBreedsLoaded, selectIsDogBreedsLoading } from '../../store/dog-breeds/selectors';
-import { selectCatBreeds, selectIsCatBreedsLoaded, selectIsCatBreedsLoading } from '../../store/cat-breeds/selectors';
+import {
+	selectDogBreedsAutocomplete,
+	selectIsDogBreedsLoaded,
+	selectIsDogBreedsLoading
+} from '../../store/dog-breeds/selectors';
+import {
+	selectCatBreedsAutocomplete,
+	selectIsCatBreedsLoaded,
+	selectIsCatBreedsLoading
+} from '../../store/cat-breeds/selectors';
 import { loadCatBreedsReduxThunk } from '../../store/cat-breeds/effects';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
 import { selectPet } from '../../store/pet/selectors';
-import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider, Picker } from '@material-ui/pickers';
-import LocalizationProvider from '@material-ui/lab';
-import { DateTime } from 'luxon';
-import LuxonUtils from '@date-io/luxon';
+import { DatePicker } from '@material-ui/pickers';
 import { Today } from '@material-ui/icons';
 
 
@@ -65,21 +71,33 @@ const AddNewPet = () => {
 	const classes = useStyles();
 	const history = useHistory();
 	const { id } = useParams<{ id: string }>();
+	// TODO: if editMode: 1) fetch pet if no pet in store
+	// TODO: clear pet from store when AddNewPet component destroyed
 	const pet: PetDataResponse | null = useSelector(selectPet);
 	const dispatch = useDispatch();
-	const dogBreeds = useSelector(selectDogBreeds);
+	const dogBreedOptions: AutocompleteOption<string>[] = useSelector(selectDogBreedsAutocomplete);
+	const catBreedOptions: AutocompleteOption<string>[] = useSelector(selectCatBreedsAutocomplete);
 	const isDogBreedsLoaded = useSelector(selectIsDogBreedsLoaded);
-	const catBreeds = useSelector(selectCatBreeds);
 	const isCatBreedsLoaded = useSelector(selectIsCatBreedsLoaded);
 	const isCatBreedsLoading = useSelector(selectIsCatBreedsLoading);
 	const isDogBreedsLoading = useSelector(selectIsDogBreedsLoading);
 
 	const editMode: boolean = !!id;
 
+	const getBreedsOptions = (selectedSpecies: SPECIES | undefined): AutocompleteOption<string>[] => {
+		if (selectedSpecies === SPECIES.CAT) {
+			return catBreedOptions;
+		}
+		if (selectedSpecies === SPECIES.DOG) {
+			return dogBreedOptions;
+		}
+		return [];
+	}
+
 	const initialValues: InitialPetData | any = editMode ? {
 		name: pet?.name || '',
 		species: speciesOptions.find(({ value }) => value === pet?.species) || null,
-		breed: null,
+		breed: getBreedsOptions(pet?.species).find(({ value }) => value === pet?.breed._id) || null,
 		gender: genderOptions.find(({ value }) => value === pet?.gender) || null,
 		dateOfBirth: pet?.dateOfBirth || null,
 		colour: pet?.colour || '',
@@ -109,6 +127,7 @@ const AddNewPet = () => {
 			.nullable()
 			.required('Required'),
 		dateOfBirth: Yup.string()
+			.nullable()
 			.required('Required'),
 		colour: Yup.string()
 			.matches(/[a-zA-Z]/, 'Animal colour can not be a number, please use Latin letters instead.'),
@@ -198,7 +217,7 @@ const AddNewPet = () => {
 					}}
 					options={speciesOptions}
 					getOptionLabel={(option) => option.label}
-					getOptionSelected={(option, value) => option.label === value.label}
+					// getOptionSelected={(option, value) => option.label === value.label}
 					renderInput={(params) =>
 						<TextField
 							{...params}
@@ -219,13 +238,11 @@ const AddNewPet = () => {
 					onChange={(event, newValue: any) => {
 						setFieldValue('breed', newValue);
 					}}
-					options={(+(values?.species ? values.species.value : '') === SPECIES.DOG ? dogBreeds : catBreeds)
-						.map(({ _id, name }) => {
-							return {
-								label: name,
-								value: _id
-							}
-						})}
+					options={(
+						+(values?.species ? values.species.value : '') === SPECIES.DOG ?
+							dogBreedOptions :
+							catBreedOptions
+					)}
 					getOptionLabel={(option) => option.label}
 					renderInput={(params) =>
 						<TextField
@@ -313,6 +330,7 @@ const AddNewPet = () => {
 				error={!!(touched.colour && errors.colour)}
 				helperText={touched.colour && errors.colour}
 			/>
+
 			<TextField
 				className={classes.formControl}
 				label="Special notes about animal"

@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect'
-import { AppState, Breed } from '../../types';
+import { AppState, AutocompleteOption, Breed } from '../../types';
 import { RootState } from '../../index';
+import { mapBreedsToAutoCompleteOptions } from '../../utils/formatters';
 
 const getState = (state: RootState) => state.catBreeds;
 
@@ -11,6 +12,10 @@ export const selectCatBreedsIsLoading = createSelector(
 export const selectCatBreeds = createSelector(
 	getState,
 	(state: AppState<Breed[]>) => state.data
+)
+export const selectCatBreedsAutocomplete = createSelector(
+	getState,
+	(state: AppState<Breed[]>): AutocompleteOption<string>[] => mapBreedsToAutoCompleteOptions(state.data)
 )
 export const selectCatBreedsError = createSelector(
 	getState,
