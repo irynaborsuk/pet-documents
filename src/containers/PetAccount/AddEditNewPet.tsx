@@ -32,6 +32,8 @@ import authorizedAxios from '../../hooks/useAxiosInterceptors';
 import { selectPet } from '../../store/pet/selectors';
 import { DatePicker } from '@material-ui/pickers';
 import { Today } from '@material-ui/icons';
+import { loadPetReduxThunk } from '../../store/pet/effects';
+import { resetPetStore } from '../../store/pet/actions';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -57,6 +59,16 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 )
 
+const emptyInitialState = {
+	name: '',
+	species: null,
+	breed: null,
+	gender: null,
+	dateOfBirth: null,
+	colour: '',
+	notes: ''
+}
+
 const speciesOptions: AutocompleteOption<SPECIES>[] = [
 	{ label: getSpeciesLabel[SPECIES.CAT], value: SPECIES.CAT },
 	{ label: getSpeciesLabel[SPECIES.DOG], value: SPECIES.DOG }
@@ -67,12 +79,10 @@ const genderOptions: AutocompleteOption<GENDER>[] = [
 	{ label: getGenderLabel[GENDER.FEMALE], value: GENDER.FEMALE }
 ]
 
-const AddNewPet = () => {
+const AddEditNewPet = () => {
 	const classes = useStyles();
 	const history = useHistory();
 	const { id } = useParams<{ id: string }>();
-	// TODO: if editMode: 1) fetch pet if no pet in store
-	// TODO: clear pet from store when AddNewPet component destroyed
 	const pet: PetDataResponse | null = useSelector(selectPet);
 	const dispatch = useDispatch();
 	const dogBreedOptions: AutocompleteOption<string>[] = useSelector(selectDogBreedsAutocomplete);
@@ -94,23 +104,17 @@ const AddNewPet = () => {
 		return [];
 	}
 
-	const initialValues: InitialPetData | any = editMode ? {
-		name: pet?.name || '',
-		species: speciesOptions.find(({ value }) => value === pet?.species) || null,
-		breed: getBreedsOptions(pet?.species).find(({ value }) => value === pet?.breed._id) || null,
-		gender: genderOptions.find(({ value }) => value === pet?.gender) || null,
-		dateOfBirth: pet?.dateOfBirth || null,
-		colour: pet?.colour || '',
-		notes: pet?.notes || ''
-	} : {
-		name: '',
-		species: null,
-		breed: null,
-		gender: null,
-		dateOfBirth: null,
-		colour: '',
-		notes: ''
-	}
+	const initialValues: InitialPetData | any = editMode
+		? {
+			name: pet?.name || '',
+			species: speciesOptions.find(({ value }) => value === pet?.species) || null,
+			breed: getBreedsOptions(pet?.species).find(({ value }) => value === pet?.breed._id) || null,
+			gender: genderOptions.find(({ value }) => value === pet?.gender) || null,
+			dateOfBirth: pet?.dateOfBirth || null,
+			colour: pet?.colour || '',
+			notes: pet?.notes || ''
+		}
+		: emptyInitialState
 
 	const validationSchema = Yup.object({
 		name: Yup.string()
@@ -177,6 +181,18 @@ const AddNewPet = () => {
 	const updatePet = (id: string, values: InitialPetData) => {
 
 	}
+
+	useEffect(() => {
+		if (editMode) {
+			dispatch(loadPetReduxThunk(id))
+		}
+	}, [])
+
+	useEffect(() => {
+		return () => {
+			dispatch(resetPetStore())
+		}
+	}, [])
 
 	useEffect(() => {
 		const selectedSpecies = values.species?.value?.toString() ?? '';
@@ -390,4 +406,4 @@ const AddNewPet = () => {
 	);
 };
 
-export default AddNewPet;
+export default AddEditNewPet;

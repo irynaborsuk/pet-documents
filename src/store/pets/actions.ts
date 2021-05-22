@@ -1,4 +1,4 @@
-import { LOAD_PETS, LOAD_PETS_FAILURE, LOAD_PETS_SUCCESS, PetsActionType } from './types';
+import { LOAD_PETS, LOAD_PETS_FAILURE, LOAD_PETS_SUCCESS, PetsActionType, RESET_PETS_STORE } from './types';
 import { PetsResponse } from '../../types';
 
 export function loadPets(): PetsActionType {
@@ -18,5 +18,11 @@ export function loadPetsFailure(errorMessage: string): PetsActionType {
 	return {
 		type: LOAD_PETS_FAILURE,
 		payload: errorMessage,
+	}
+}
+
+export function resetPetsStore(): PetsActionType {
+	return {
+		type: RESET_PETS_STORE
 	}
 }

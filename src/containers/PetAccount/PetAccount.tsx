@@ -7,6 +7,7 @@ import { selectUserHasPets } from '../../store/pets/selectors';
 import { loadPetsReduxThunk } from '../../store/pets/effects';
 import PetsAddCard from '../../components/PetsAddCard';
 import PetsCardsList from '../../components/PetsCardsList';
+import { resetPetsStore } from '../../store/pets/actions';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -31,6 +32,12 @@ const PetAccount = () => {
 
 	useEffect(() => {
 		dispatch(loadPetsReduxThunk());
+	}, [])
+
+	useEffect(() => {
+		return () => {
+			dispatch(resetPetsStore())
+		}
 	}, [])
 
 	if (!isAuthenticated) {

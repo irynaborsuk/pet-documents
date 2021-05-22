@@ -1,6 +1,5 @@
 import React from 'react';
 import CarouselInfo from '../CaruselInfo/CarouselInfo';
-import LeftDrawerMenu from '../../components/LeftDrawerMenu';
 
 const Dashboard = () => {
 	return (

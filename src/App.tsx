@@ -8,7 +8,7 @@ import {
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Dashboard from './containers/Dashboard/Dashboard';
 import PetAccount from './containers/PetAccount/PetAccount';
-import AddNewPet from './containers/PetAccount/AddNewPet';
+import AddEditNewPet from './containers/PetAccount/AddEditNewPet';
 import withLocalTheme from './hoc/withLocalTheme';
 import { useAxiosInterceptors } from './hooks/useAxiosInterceptors';
 import PetProfile from './containers/PetAccount/PetProfile';
@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function App() {
+
 	useAxiosInterceptors();
 
 	const classes = useStyles();
@@ -42,8 +43,8 @@ function App() {
 						<Header/>
 						<Route path="/" exact><Dashboard/></Route>
 						<Route path="/pet-account"><PetAccount/></Route>
-						<Route path="/create-pet-form"><AddNewPet/></Route>
-						<Route path={'/edit-pet/:id'}><AddNewPet/></Route>
+						<Route path="/create-pet-form"><AddEditNewPet/></Route>
+						<Route path={'/edit-pet/:id'}><AddEditNewPet/></Route>
 						<Route path={'/pet/:id'}><PetProfile/></Route>
 					</Fragment>
 				</Switch>

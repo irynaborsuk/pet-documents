@@ -2,7 +2,7 @@ import {
 	LOAD_PET,
 	LOAD_PET_FAILURE,
 	LOAD_PET_SUCCESS,
-	PetActionType
+	PetActionType, RESET_PET_STORE
 } from './types';
 import { AppState, PetDataResponse } from '../../types';
 
@@ -37,6 +37,12 @@ export default function petReducer(
 				isLoading: false,
 				data:  null,
 				errorMessage: action.payload
+			}
+		case RESET_PET_STORE:
+			return {
+				...state,
+				isLoading: false,
+				data:  null,
 			}
 		default:
 			return state
