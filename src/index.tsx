@@ -13,9 +13,9 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { AppState, Breed, PetDataResponse, PetsResponse } from './types';
 import petsReducer from './store/pets/reducer';
 import petReducer from './store/pet/reducer';
-import petDeleteReducer from './store/pet-delete/reducer';
 import LuxonUtils from '@date-io/luxon';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import ownerReducer from './store/owner-store/reducer';
 
 export interface RootState {
 	catBreeds: AppState<Breed[]>;
@@ -29,7 +29,7 @@ const rootReducer = combineReducers({
 	dogBreeds: dogBreedsReducer,
 	pets: petsReducer,
 	pet: petReducer,
-	petDelete: petDeleteReducer
+	owner: ownerReducer
 })
 
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));

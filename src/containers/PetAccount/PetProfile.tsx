@@ -65,7 +65,7 @@ const PetProfile = () => {
 
 	useEffect(() => {
 		dispatch(loadPetReduxThunk(id));
-	}, [])
+	}, [dispatch, id])
 
 	if (!pet) {
 		return <></>;
@@ -96,7 +96,6 @@ const PetProfile = () => {
 				</Grid>
 				{/*TODO: add owners*/}
 				{/*TODO: delete owner*/}
-				{/*TODO: user can edit pet profile*/}
 				<CardContent>
 					<Grid container
 						  justify="center"

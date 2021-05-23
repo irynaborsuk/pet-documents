@@ -28,11 +28,10 @@ import {
 	selectIsCatBreedsLoading
 } from '../../store/cat-breeds/selectors';
 import { loadCatBreedsReduxThunk } from '../../store/cat-breeds/effects';
-import authorizedAxios from '../../hooks/useAxiosInterceptors';
 import { selectPet } from '../../store/pet/selectors';
 import { DatePicker } from '@material-ui/pickers';
 import { Today } from '@material-ui/icons';
-import { loadPetReduxThunk } from '../../store/pet/effects';
+import { createPetReduxThunk, editPetReduxThunk, loadPetReduxThunk } from '../../store/pet/effects';
 import { resetPetStore } from '../../store/pet/actions';
 
 
@@ -151,48 +150,32 @@ const AddEditNewPet = () => {
 		initialValues,
 		validationSchema,
 		enableReinitialize: true,
-		onSubmit: (ev) => {
-			return !editMode ? createPet(ev) : updatePet(id, ev)
+		onSubmit: (values) => {
+			const selectedSpecies: SPECIES = Number.parseInt(values.species?.value?.toString() || '');
+			const selectedGender: GENDER = Number.parseInt(values.gender?.value?.toString() || '');
+			const data = {
+				name: values.name,
+				species: selectedSpecies,
+				breed: values.breed?.value,
+				gender: selectedGender,
+				dateOfBirth: values.dateOfBirth,
+				colour: values.colour,
+				notes: values.notes
+			}
+			!editMode
+				? dispatch(createPetReduxThunk(data, history))
+				: dispatch(editPetReduxThunk(id, data, history))
+			resetForm();
 		}
 	});
 
-	const createPet = async (values: InitialPetData) => {
-		const selectedSpecies: SPECIES = Number.parseInt(values.species?.value?.toString() || '');
-		const selectedGender: GENDER = Number.parseInt(values.gender?.value?.toString() || '');
-		const data = {
-			name: values.name,
-			species: selectedSpecies,
-			breed: values.breed?.value,
-			gender: selectedGender,
-			dateOfBirth: values.dateOfBirth,
-			colour: values.colour,
-			notes: values.notes
-		}
-		await authorizedAxios.post('/pet/create', data)
-			.then((response) => {
-				console.log(response.data);
-				{/*TODO: що далі з response.data) робити*/
-				}
-				resetForm();
-				history.push('/pet-account');
-			})
-	}
-
-	const updatePet = (id: string, values: InitialPetData) => {
-
-	}
+	useEffect(() => {
+		if (editMode) dispatch(loadPetReduxThunk(id))
+	}, [dispatch, editMode, id])
 
 	useEffect(() => {
-		if (editMode) {
-			dispatch(loadPetReduxThunk(id))
-		}
-	}, [])
-
-	useEffect(() => {
-		return () => {
-			dispatch(resetPetStore())
-		}
-	}, [])
+		return () => {dispatch(resetPetStore())}
+	}, [dispatch])
 
 	useEffect(() => {
 		const selectedSpecies = values.species?.value?.toString() ?? '';
@@ -204,7 +187,7 @@ const AddEditNewPet = () => {
 			dispatch(loadCatBreedsReduxThunk());
 			return;
 		}
-	}, [values.species]);
+	}, [dispatch, isCatBreedsLoaded, isDogBreedsLoaded, values.species]);
 
 	return (
 
@@ -223,7 +206,7 @@ const AddEditNewPet = () => {
 				error={!!(touched.name && errors.name)}
 				helperText={touched.name && errors.name}
 			/>
-
+			{/*TODO: getOptionSelected - solve the error*/}
 			<FormControl variant="outlined" className={classes.formControl}>
 				<Autocomplete
 					value={values.species}

@@ -1,5 +1,4 @@
 import { LOAD_PETS, LOAD_PETS_FAILURE, LOAD_PETS_SUCCESS, PetsActionType, RESET_PETS_STORE } from './types';
-import { RESET_PET_STORE } from '../pet/types';
 
 const initialState = {
 	isLoading: false,
@@ -37,7 +36,7 @@ export default function petsReducer(
 			return {
 				...state,
 				isLoading: false,
-				data:  null,
+				data:  [],
 			}
 		default:
 			return state

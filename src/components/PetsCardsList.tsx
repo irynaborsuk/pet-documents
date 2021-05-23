@@ -9,12 +9,12 @@ import catIcon from '../images/catIcon512.png';
 import dogIcon from '../images/dogIcon512.png';
 import AddIcon from '@material-ui/icons/Add';
 import { useHistory } from 'react-router';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { selectPets } from '../store/pets/selectors';
 import { DateTime } from 'luxon';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
 	createStyles({
 		addButton: {
 			position: 'fixed',
