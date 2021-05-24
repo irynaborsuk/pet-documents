@@ -40,7 +40,6 @@ const PetInfoBlock = (
 			/>
 			<CardContent>
 				<Grid item>
-					{/*TODO: add styles and work with them*/}
 					<Typography className={classes.typographyAdditionInfo} variant="subtitle1">
 						<b className={classes.textStyles}>Date of birth:</b>
 					</Typography>
@@ -73,7 +72,6 @@ const PetInfoBlock = (
 					</Typography>
 				</Grid>
 			</CardContent>
-
 		</Card>
 	);
 };
