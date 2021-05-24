@@ -1,3 +1,5 @@
+import { IAddAnOwner } from '../../types';
+
 export const ADD_AN_OWNER_PENDING = 'ADD_AN_OWNER_PENDING';
 export const ADD_AN_OWNER_SUCCEEDED = 'ADD_AN_OWNER_SUCCEEDED';
 export const ADD_AN_OWNER_FAILED = 'ADD_AN_OWNER_FAILED';
@@ -12,6 +14,7 @@ interface AddAnOwnerPending {
 
 interface AddAnOwnerSucceeded {
 	type: typeof ADD_AN_OWNER_SUCCEEDED
+	payload: IAddAnOwner
 }
 
 interface AddAnOwnerFailed {

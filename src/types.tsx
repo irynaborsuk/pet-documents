@@ -63,6 +63,14 @@ export interface IOwnerData {
 	family_name: string
 }
 
+export interface IAddAnOwner {
+	ownerEmail: string
+}
+
+export interface IRemoveAnOwner {
+	ownerId: string
+}
+
 export interface AutocompleteOption<T> {
 	label: string;
 	value: T;

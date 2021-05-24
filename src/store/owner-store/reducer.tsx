@@ -13,11 +13,6 @@ const initialState = {
 	isRemovingAnOwner: false,
 }
 
-// TODO: make connections to the buttons
-// TODO: add effects
-// TODO: make copy of this version and clean one of them for gitHub
-// TODO: make as much work for gitHub as I can during this weekend
-
 export default function ownerReducer(
 	state = initialState,
 	action: OwnerActionTypes

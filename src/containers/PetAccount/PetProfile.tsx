@@ -5,20 +5,23 @@ import {
 	CardActions,
 	CardContent,
 	CardHeader,
-	Grid,
-	makeStyles
+	Grid, IconButton,
+	makeStyles, Tooltip
 } from '@material-ui/core';
 import { PetDataResponse, SPECIES } from '../../types';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadPetReduxThunk } from '../../store/pet/effects';
 import { selectPet } from '../../store/pet/selectors';
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import catIcon from '../../images/catIcon512.png';
 import dogIcon from '../../images/dogIcon512.png';
 import { createStyles, Theme } from '@material-ui/core/styles';
 import PetInfoBlock from './PetInfoBlock';
-import PetsActionButtons from './PetsActionButtons';
 import PetsSubtitleData from './PetsSubtitleData';
+import AddAnOwner from './cardActionButtons/AddAnOwner';
+import RemoveAnOwner from './cardActionButtons/RemoveAnOwner';
+import { Edit } from '@material-ui/icons';
+import DeletePet from './cardActionButtons/DeletePet';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -53,6 +56,9 @@ const useStyles = makeStyles((theme: Theme) =>
 			[theme.breakpoints.down('sm')]: {
 				justifyContent: 'center',
 			},
+		},
+		actionIconStyles: {
+			fill: theme.palette.secondary.dark
 		}
 	})
 );
@@ -62,6 +68,7 @@ const PetProfile = () => {
 	const pet: PetDataResponse | null = useSelector(selectPet);
 	const { id } = useParams<{ id: string }>();
 	const dispatch = useDispatch();
+	const history = useHistory();
 
 	useEffect(() => {
 		dispatch(loadPetReduxThunk(id));
@@ -90,11 +97,26 @@ const PetProfile = () => {
 					</Grid>
 					<Grid item xs={12} md={4} >
 						<CardActions className={classes.cardActionsStyles}>
-							<PetsActionButtons petId={pet._id}/>
+
+							<div>
+								<AddAnOwner petId={pet._id}/>
+
+								<RemoveAnOwner petId={pet._id}/>
+
+								<Tooltip title={'Edit pet profile'}>
+									<IconButton
+										onClick={() => history.push(`/edit-pet/${pet._id}`)}
+									>
+										<Edit className={classes.actionIconStyles}/>
+									</IconButton>
+								</Tooltip>
+
+								<DeletePet petId={pet._id}/>
+
+							</div>
 						</CardActions>
 					</Grid>
 				</Grid>
-				{/*TODO: add owners*/}
 				{/*TODO: delete owner*/}
 				<CardContent>
 					<Grid container
