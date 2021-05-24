@@ -77,6 +77,11 @@ export interface BreedId extends Breed {
 	__v: number
 }
 
+export interface FactsTypes {
+	_id: string;
+	name: string;
+}
+
 export interface CarouselStyleProps {
 	className: string,
 	style: React.CSSProperties

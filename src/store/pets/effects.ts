@@ -1,4 +1,4 @@
-import { Dispatch } from 'react';
+import { Dispatch } from 'redux';
 import { loadPets, loadPetsFailure, loadPetsSuccess } from './actions';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
 

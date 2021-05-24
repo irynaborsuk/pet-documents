@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Card, createStyles, useMediaQuery } from '@material-ui/core';
 import Carousel from 'react-material-ui-carousel';
 import { createMuiTheme, makeStyles, Theme } from '@material-ui/core/styles';
-import { CarouselStyleProps } from '../../types';
-import authorizedAxios from '../../hooks/useAxiosInterceptors';
+import { CarouselStyleProps, FactsTypes } from '../../types';
+import { useDispatch, useSelector } from 'react-redux';
+import { catFactsReduxThunk } from '../../store/cat-facts/effects';
+import { selectCatFacts } from '../../store/cat-facts/selectors';
+import { selectDogFacts } from '../../store/dog-facts/selectors';
+import { dogFactsReduxThunk } from '../../store/dog-facts/effects';
 
 const useStyles = makeStyles((theme:Theme) =>
 	createStyles({
@@ -45,31 +49,15 @@ const navButtonStyle: CarouselStyleProps = {
 	}
 }
 
-/*const items = [
-	{
-		name: "Cat info",
-		description: "Some ifo about cat's food",
-		color: "#64ACC8"
-	},
-	{
-		name: "Cat 2 info",
-		description: "Some information about cats treatments",
-		color: "#7D85B1"
-	},
-	{
-		name: "Dog info",
-		description: "Some advertising for dog's food",
-		color: "#CE7E78"
-	}
-]*/
-
 const theme = createMuiTheme({});
 
 const CarouselInfo = () => {
 	const sm = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
 	const classes = useStyles();
-	const [catsFacts, setCatsFacts] = useState([]);
-	const [dogsFacts, setDogsFacts] = useState([]);
+	const dispatch = useDispatch();
+	const catsFacts: FactsTypes[] = useSelector(selectCatFacts);
+	const dogsFacts: FactsTypes[] = useSelector(selectDogFacts);
+
 	const items: Array<object> = [];
 	items.push(...catsFacts, ...dogsFacts);
 	shuffle(items);
@@ -83,28 +71,11 @@ const CarouselInfo = () => {
 		return a;
 	}
 
-	const getCatFacts = async () => {
-		try {
-			const response = await authorizedAxios.get('/static/cat-facts')
-			setCatsFacts(response.data);
-		} catch (error) {
-
-		}
-	}
-
-	const getDogsFacts = async () => {
-		try {
-			const response = await authorizedAxios.get('/static/dog-facts')
-			setDogsFacts(response.data);
-		} catch (error) {
-
-		}
-	}
 
 	useEffect(() => {
-		getCatFacts().then();
-		getDogsFacts().then();
-	}, [])
+		dispatch(catFactsReduxThunk());
+		dispatch(dogFactsReduxThunk());
+	}, [dispatch])
 
 	{/*TODO: carousel must be shown even if user is not register*/}
 
