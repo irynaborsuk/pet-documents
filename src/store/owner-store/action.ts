@@ -7,7 +7,7 @@ import {
 	REMOVE_AN_OWNER_SUCCEEDED,
 	OwnerActionTypes
 } from './types';
-import { IAddAnOwner } from '../../types';
+import { IAddAnOwner, IRemoveAnOwnerId } from '../../types';
 
 export function addAnOwnerPending(): OwnerActionTypes {
 	return {
@@ -15,10 +15,10 @@ export function addAnOwnerPending(): OwnerActionTypes {
 	}
 }
 
-export function addAnOwnerSucceeded(owner: IAddAnOwner): OwnerActionTypes {
+export function addAnOwnerSucceeded(ownerId: IAddAnOwner): OwnerActionTypes {
 	return {
 		type: ADD_AN_OWNER_SUCCEEDED,
-		payload: owner
+		payload: ownerId
 	}
 }
 
@@ -37,7 +37,7 @@ export function removeAnOwnerPending(): OwnerActionTypes {
 
 export function removeAnOwnerSucceeded(): OwnerActionTypes {
 	return {
-		type: REMOVE_AN_OWNER_SUCCEEDED
+		type: REMOVE_AN_OWNER_SUCCEEDED,
 	}
 }
 

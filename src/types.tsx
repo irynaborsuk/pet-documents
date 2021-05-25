@@ -67,7 +67,7 @@ export interface IAddAnOwner {
 	ownerEmail: string
 }
 
-export interface IRemoveAnOwner {
+export interface IRemoveAnOwnerId {
 	ownerId: string
 }
 

@@ -1,4 +1,4 @@
-import { IAddAnOwner } from '../../types';
+import { IAddAnOwner, IRemoveAnOwnerId } from '../../types';
 
 export const ADD_AN_OWNER_PENDING = 'ADD_AN_OWNER_PENDING';
 export const ADD_AN_OWNER_SUCCEEDED = 'ADD_AN_OWNER_SUCCEEDED';
@@ -27,7 +27,7 @@ interface RemoveAnOwnerPending {
 }
 
 interface RemoveAnOwnerSucceeded {
-	type: typeof REMOVE_AN_OWNER_SUCCEEDED
+	type: typeof REMOVE_AN_OWNER_SUCCEEDED,
 }
 
 interface RemoveAnOwnerFailed {

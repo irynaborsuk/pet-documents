@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import {
-	Avatar, Checkbox, FormControlLabel,
-	IconButton,
-	List,
-	ListItem,
-	ListItemAvatar,
-	ListItemText,
-	Tooltip,
-	Typography
+	FormControl, FormControlLabel,
+	IconButton, Radio, RadioGroup,
+	Tooltip
 } from '@material-ui/core';
 import RemovePerson from '../../../images/RemovePerson.svg';
 import Dialog from '@material-ui/core/Dialog';
@@ -16,24 +11,18 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
-import { IRemoveAnOwnerId, PetDataResponse } from '../../../types';
+import { IOwnerData, IRemoveAnOwnerId, PetDataResponse } from '../../../types';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectPet } from '../../../store/pet/selectors';
 import { removeAnOwnerReduxThunk } from '../../../store/owner-store/effects';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 
-const RemoveAnOwner = ({ petId }: any) => {
-	const [openRemoveOwner, setOpenRemoveOwner] = React.useState(false);
+const RemoveOwner = ({ petId }: any) => {
+	const [openRemoveOwner, setOpenRemoveOwner] = useState(false);
 	const [selectedValue, setSelectedValue] = useState([]);
 	const pet: PetDataResponse | null = useSelector(selectPet);
 	const dispatch = useDispatch();
-
-	const [checkBoxState, setCheckBoxState] = useState({ checked: false });
-
-	const checkBoxHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setCheckBoxState({ ...checkBoxState, [event.target.name]: event.target.checked });
-	};
 
 	const handleClickOpenRemoveOwner = () => {
 		setOpenRemoveOwner(true)
@@ -47,21 +36,17 @@ const RemoveAnOwner = ({ petId }: any) => {
 	};
 
 	const initialValues: IRemoveAnOwnerId = {
-		ownerId: ""
+		ownerId: ''
 	}
 
 	const validationSchema = Yup.object({
-		ownerId: Yup.string()
+		ownerId: Yup.string().required()
 	});
 
 	const {
 		handleSubmit,
-		handleChange,
-		handleBlur,
 		values,
-		errors,
-		touched,
-		resetForm
+		setFieldValue
 	} = useFormik({
 		initialValues,
 		validationSchema,
@@ -91,55 +76,34 @@ const RemoveAnOwner = ({ petId }: any) => {
 				<form onSubmit={handleSubmit}>
 					<DialogTitle id="form-dialog-title">Remove an owner</DialogTitle>
 					<DialogContent>
+
+
+						<FormControl component="fieldset">
+							<RadioGroup
+								aria-label="removeAnOwner"
+								name="removeAnOwner"
+								value={values.ownerId}
+								onChange={({ target: { value: newOwnerId } }) => {
+									setFieldValue('ownerId', newOwnerId);
+								}}
+							>
+								{pet.owners.map((item: IOwnerData) => (
+									<FormControlLabel
+										key={item.user_id}
+										value={item.user_id}
+										control={<Radio/>}
+										label={item.email}
+										onClick={() => handleListItemClick([item.given_name, item.family_name].join(' '))}
+									/>
+								))}
+							</RadioGroup>
+						</FormControl>
+
+						<DialogTitle id="form-dialog-title">Selected: {selectedValue}</DialogTitle>
+
 						<DialogContentText>
 							Warning! This action cannot be undone after deleting the owner. Do you want to continue?
 						</DialogContentText>
-
-						{/*
-						<List>
-							{pet.owners.map((item) => (
-								<ListItem
-									button
-									onClick={() => handleListItemClick([item.given_name, item.family_name].join(' '))}
-									key={item.user_id}
-								>
-									<ListItemAvatar>
-										<Avatar />
-									</ListItemAvatar>
-									<ListItemText
-										//value={values.ownerId}
-										primary={item.email}
-									/>
-								</ListItem>
-							))}
-						</List>
-						*/}
-
-						<List>
-							{pet.owners.map((item) => (
-								<ListItem
-									button
-									onClick={() => handleListItemClick([item.given_name, item.family_name].join(' '))}
-									key={item.user_id}
-								>
-									<ListItemAvatar>
-										<Avatar />
-									</ListItemAvatar>
-									<ListItemText
-										//value={values.ownerId}
-										primary={item.email}
-									/>
-								</ListItem>
-							))}
-						</List>
-
-						<br />
-						<Typography variant="h6">Selected: {selectedValue}</Typography>
-
-
-						{/* TODO: delete by id, like delete for pet, use radio buttons or checkbox */}
-						{/* TODO: make visible avatar photo */}
-
 
 					</DialogContent>
 					<DialogActions>
@@ -160,4 +124,4 @@ const RemoveAnOwner = ({ petId }: any) => {
 	);
 };
 
-export default RemoveAnOwner;
+export default RemoveOwner;

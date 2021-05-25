@@ -22,6 +22,7 @@ import AddAnOwner from './cardActionButtons/AddAnOwner';
 import RemoveAnOwner from './cardActionButtons/RemoveAnOwner';
 import { Edit } from '@material-ui/icons';
 import DeletePet from './cardActionButtons/DeletePet';
+import RemoveOwner from './cardActionButtons/RemoweOwner';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -101,7 +102,7 @@ const PetProfile = () => {
 							<div>
 								<AddAnOwner petId={pet._id}/>
 
-								<RemoveAnOwner petId={pet._id}/>
+								<RemoveOwner petId={pet._id}/>
 
 								<Tooltip title={'Edit pet profile'}>
 									<IconButton
