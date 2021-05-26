@@ -19,10 +19,9 @@ import { createStyles, Theme } from '@material-ui/core/styles';
 import PetInfoBlock from './PetInfoBlock';
 import PetsSubtitleData from './PetsSubtitleData';
 import AddAnOwner from './cardActionButtons/AddAnOwner';
-import RemoveAnOwner from './cardActionButtons/RemoveAnOwner';
 import { Edit } from '@material-ui/icons';
 import DeletePet from './cardActionButtons/DeletePet';
-import RemoveOwner from './cardActionButtons/RemoweOwner';
+import RemoveAnOwner from './cardActionButtons/RemoweAnOwner';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -102,7 +101,7 @@ const PetProfile = () => {
 							<div>
 								<AddAnOwner petId={pet._id}/>
 
-								<RemoveOwner petId={pet._id}/>
+								<RemoveAnOwner petId={pet._id}/>
 
 								<Tooltip title={'Edit pet profile'}>
 									<IconButton
