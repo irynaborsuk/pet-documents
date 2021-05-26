@@ -1,6 +1,6 @@
 import React from 'react';
 import LeftDrawerMenu from './LeftDrawerMenu';
-import { Avatar, Card, CardActions, CardHeader, Menu, MenuItem } from '@material-ui/core';
+import { Avatar, Card, CardActions, CardContent, CardHeader, Menu, MenuItem, Typography } from '@material-ui/core';
 import SignOutButton from '../UI/SignOutButton';
 import { useAuth0 } from '@auth0/auth0-react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -18,6 +18,12 @@ const useStyles = makeStyles((theme: Theme) =>
 			display: 'flex',
 			flexDirection: 'column',
 			justifyContent: 'center',
+		},
+		cardStyles: {
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'center',
+			padding: '20px'
 		},
 		toolBar: {
 			display: 'flex',
@@ -55,14 +61,20 @@ const Header = () => {
 		>
 			<MenuItem className={classes.avatarMenuStyles}>
 				{isAuthenticated && (
-					<Card>
+					<Card className={classes.cardStyles}>
 						<CardHeader
 							avatar={
 								<Avatar src={user.picture} alt={user.name} className={classes.large}/>
 							}
-							title={user.name}
-							subheader={user.email}
 						/>
+						<CardContent className={classes.cardStyles}>
+							<Typography variant="h6" color="textSecondary" component="p">
+								{user.name}
+							</Typography>
+							<Typography variant="body2" color="textSecondary" component="p">
+								{user.email}
+							</Typography>
+						</CardContent>
 					</Card>
 				)}
 

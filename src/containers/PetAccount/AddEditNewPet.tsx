@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			display: 'flex',
 			margin: theme.spacing(1),
 			width: '100%',
-			maxWidth: '900px'
+			maxWidth: '1000px'
 		},
 		buttonsGroup: {
 			display: 'flex',

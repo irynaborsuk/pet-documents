@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			display: 'flex',
 			flexDirection: 'column',
 			width: '100%',
-			maxWidth: '900px'
+			maxWidth: '1000px'
 		},
 		large: {
 			width: theme.spacing(12),

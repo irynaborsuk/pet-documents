@@ -8,6 +8,7 @@ import { loadPetsReduxThunk } from '../../store/pets/effects';
 import PetsAddCard from '../../components/PetsAddCard';
 import PetsCardsList from '../../components/PetsCardsList';
 import { resetPetsStore } from '../../store/pets/actions';
+import CarouselInfo from '../CaruselInfo/CarouselInfo';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			display: 'flex',
 			flexDirection: 'column',
 			width: '100%',
-			maxWidth: '900px'
+			maxWidth: '1000px'
 		}
 	})
 )
@@ -53,6 +54,8 @@ const PetAccount = () => {
 					</div>
 				)
 			}
+
+
 		</div>
 	);
 }
