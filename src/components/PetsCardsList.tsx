@@ -16,11 +16,6 @@ import { DateTime } from 'luxon';
 
 const useStyles = makeStyles(() =>
 	createStyles({
-		addButton: {
-			position: 'fixed',
-			bottom: '20px',
-			right: '20px'
-		},
 		cardContent: {
 			display: 'flex',
 			width: '100%',
@@ -78,14 +73,6 @@ const PetsCardsList = () => {
 					</Grid>
 				)
 			})}
-
-			<Fab className={classes.addButton} color="primary" aria-label="add">
-				<AddIcon
-					onClick={() => {
-						history.push('/create-pet-form')
-					}}
-				/>
-			</Fab>
 		</Grid>
 	);
 };

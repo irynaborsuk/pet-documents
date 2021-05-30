@@ -50,7 +50,8 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		buttonsGroup: {
 			display: 'flex',
-			justifyContent: 'space-between'
+			justifyContent: 'space-between',
+			alignItems: 'center'
 		},
 		errorMessage: {
 			color: theme.palette.error.main

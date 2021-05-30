@@ -1,5 +1,4 @@
 import React from 'react';
-import LeftDrawerMenu from './LeftDrawerMenu';
 import { Avatar, Card, CardActions, CardContent, CardHeader, Menu, MenuItem, Typography } from '@material-ui/core';
 import SignOutButton from '../UI/SignOutButton';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -7,6 +6,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import SignInButton from '../UI/SignInButton';
 import AppBar from '@material-ui/core/AppBar';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			justifyContent: 'space-between',
 		},
 		labelStyles: {
-			fontSize: 'x-large'
+			fontSize: 'large'
 		}
 	})
 );
@@ -40,6 +40,7 @@ const Header = () => {
 	const { user, isAuthenticated } = useAuth0();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const isMenuOpen = Boolean(anchorEl);
+	const history = useHistory();
 
 	const handleAvatarToggle = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -91,8 +92,12 @@ const Header = () => {
 				<Toolbar className={classes.toolBar}>
 
 					<div className={classes.toolBar}>
-						<LeftDrawerMenu/>
-						<div className={classes.labelStyles}>Pet's Documents</div>
+						<MenuItem
+							className={classes.labelStyles}
+							onClick={() => history.push('/pet-account')}
+						>
+							Pet's Documents
+						</MenuItem>
 					</div>
 
 					{isAuthenticated ?

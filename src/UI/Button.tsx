@@ -17,9 +17,16 @@ const useStyles = makeStyles((theme: Theme) =>
 			borderRadius: '5px',
 			border: '1px solid rgba(0,0,0,0.3)',
 			borderBottomWidth: '3px',
+			boxShadow: '2px 1px 2px gray',
+			margin: '4px 10px 4px 10px',
+			cursor: 'pointer',
 			'&:hover': {
 				backgroundColor: 'var(--color-hover-grey)',
 				borderColor: 'var(--color-black-rgba)'
+			},
+			'&:active': {
+				boxShadow: '0 0 0 white',
+				margin: '6px 10px 2px 10px'
 			}
 		}
 	})
