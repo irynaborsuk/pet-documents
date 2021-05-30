@@ -1,43 +1,52 @@
 import React from 'react';
-import { Avatar, Card, CardActions, CardContent, CardHeader, Menu, MenuItem, Typography } from '@material-ui/core';
-import SignOutButton from '../UI/SignOutButton';
+import {
+	Avatar,
+	Card,
+	CardContent,
+	Menu,
+	MenuItem,
+	Typography
+} from '@material-ui/core';
 import { useAuth0 } from '@auth0/auth0-react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import SignInButton from '../UI/SignInButton';
 import AppBar from '@material-ui/core/AppBar';
 import { useHistory } from 'react-router';
+import { ExitToApp } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		large: {
-			width: theme.spacing(7),
-			height: theme.spacing(7),
-		},
-		avatarMenuStyles: {
-			display: 'flex',
-			flexDirection: 'column',
-			justifyContent: 'center',
+			width: '64px',
+			height: '64px',
 		},
 		cardStyles: {
 			display: 'flex',
 			flexDirection: 'column',
 			alignItems: 'center',
-			padding: '20px'
+			padding: theme.spacing(2)
 		},
 		toolBar: {
 			display: 'flex',
-			justifyContent: 'space-between',
+			justifyContent: 'space-between'
 		},
 		labelStyles: {
 			fontSize: 'large'
+		},
+		logOutButton: {
+			display: 'flex',
+			justifyContent: 'center'
+		},
+		menuItemText: {
+			paddingLeft: theme.spacing(1)
 		}
 	})
 );
 
 const Header = () => {
 	const classes = useStyles();
-	const { user, isAuthenticated } = useAuth0();
+	const { user, isAuthenticated, logout } = useAuth0();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const isMenuOpen = Boolean(anchorEl);
 	const history = useHistory();
@@ -58,30 +67,30 @@ const Header = () => {
 			transformOrigin={{ vertical: 'top', horizontal: 'right' }}
 			open={isMenuOpen}
 			onClose={handleAvatarMenuClose}
-			onClick={() => setAnchorEl(null)}
 		>
-			<MenuItem className={classes.avatarMenuStyles}>
-				{isAuthenticated && (
-					<Card className={classes.cardStyles}>
-						<CardHeader
-							avatar={
-								<Avatar src={user.picture} alt={user.name} className={classes.large}/>
-							}
-						/>
-						<CardContent className={classes.cardStyles}>
-							<Typography variant="h6" color="textSecondary" component="p">
-								{user.name}
-							</Typography>
-							<Typography variant="body2" color="textSecondary" component="p">
-								{user.email}
-							</Typography>
-						</CardContent>
-					</Card>
-				)}
+			{isAuthenticated && (
+				<Card className={classes.cardStyles}>
+					<Avatar src={user.picture} alt={user.name} className={classes.large}/>
+					<CardContent className={classes.cardStyles}>
+						<Typography variant="h6" color="textSecondary" component="p">
+							{user.name}
+						</Typography>
+						<Typography variant="body2" color="textSecondary" component="p">
+							{user.email}
+						</Typography>
+					</CardContent>
+				</Card>
+			)}
 
-				<CardActions>
-					<SignOutButton/>
-				</CardActions>
+			<MenuItem
+				className={classes.logOutButton}
+				onClick={() => {
+					logout({ returnTo: window.location.origin });
+					setAnchorEl(null)
+				}}
+			>
+				<ExitToApp/>
+				<Typography className={classes.menuItemText} variant="body1">Log out</Typography>
 			</MenuItem>
 		</Menu>
 	);

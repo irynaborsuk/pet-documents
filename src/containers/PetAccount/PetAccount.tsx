@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		scrollBox: {
 			overflow: 'scroll',
-			marginBottom: '240px',
+			marginBottom: theme.spacing(30),
 			display: 'flex',
 			flexDirection: 'column',
 			justifyContent: 'space-between',
@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			display: 'flex',
 			justifyContent: 'flex-end',
 			alignSelf: 'self-end',
-			padding: '10px'
+			padding: theme.spacing(1)
 		},
 
 		//mobile styles
@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			flexDirection: 'column'
 		},
 		fabButton: {
-			margin: '5px 0'
+			margin: 'theme.spacing(1), 0'
 		},
 		factsBlock: {
 			display: 'flex',
@@ -86,8 +86,8 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		factsBlockCarousel: {
 			background: theme.palette.primary.main,
-			padding: '5px',
-			borderRadius: '5px'
+			padding: theme.spacing(1),
+			borderRadius: theme.spacing(1)
 		}
 	})
 )
@@ -117,13 +117,13 @@ const PetAccount = () => {
 
 	useEffect(() => {
 		dispatch(loadPetsReduxThunk());
-	}, [])
+	}, [dispatch])
 
 	useEffect(() => {
 		return () => {
 			dispatch(resetPetsStore())
 		}
-	}, [])
+	}, [dispatch])
 
 	if (!isAuthenticated) {
 		return <h3>Please, sign in first to open a pet account!</h3>;

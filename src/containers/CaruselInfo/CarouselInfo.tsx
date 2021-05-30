@@ -18,9 +18,9 @@ const useStyles = makeStyles((theme:Theme) =>
 			fontSize: 'larger',
 			fontFamily: 'cursive',
 			minHeight: '150px',
-			padding: '10px',
+			padding: theme.spacing(1),
 			[theme.breakpoints.up('sm')]: {
-				padding: '0 70px',
+				padding: theme.spacing(9),
 			},
 		},
 		cardContent: {
@@ -36,7 +36,6 @@ const useStyles = makeStyles((theme:Theme) =>
 		},
 		cardContentItem: {
 			display: 'flex',
-
 		},
 	})
 )
@@ -76,8 +75,6 @@ const CarouselInfo = () => {
 		dispatch(catFactsReduxThunk());
 		dispatch(dogFactsReduxThunk());
 	}, [dispatch])
-
-	{/*TODO: carousel must be shown even if user is not register*/}
 
 	return (
 		<Carousel

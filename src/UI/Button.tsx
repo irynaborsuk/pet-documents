@@ -13,12 +13,12 @@ const useStyles = makeStyles((theme: Theme) =>
 			textTransform: 'uppercase',
 			letterSpacing: '2px',
 			fontSize: '12px',
-			padding: '5px 10px',
-			borderRadius: '5px',
+			padding: 'theme.spacing(1) theme.spacing(1.5)',
+			borderRadius: theme.spacing(1),
 			border: '1px solid rgba(0,0,0,0.3)',
 			borderBottomWidth: '3px',
 			boxShadow: '2px 1px 2px gray',
-			margin: '4px 10px 4px 10px',
+			margin: 'theme.spacing(0.5), theme.spacing(1.5)',
 			cursor: 'pointer',
 			'&:hover': {
 				backgroundColor: 'var(--color-hover-grey)',
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			},
 			'&:active': {
 				boxShadow: '0 0 0 white',
-				margin: '6px 10px 2px 10px'
+				margin: 'theme.spacing(1), theme.spacing(2)'
 			}
 		}
 	})

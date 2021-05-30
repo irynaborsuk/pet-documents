@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		genderImg: {
 			width: '1em',
 			height: '1em',
-			margin: '5px'
+			margin: theme.spacing(1)
 		}
 	})
 );

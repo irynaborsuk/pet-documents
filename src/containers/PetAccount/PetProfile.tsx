@@ -36,8 +36,8 @@ const useStyles = makeStyles((theme: Theme) =>
 			maxWidth: '1000px'
 		},
 		large: {
-			width: theme.spacing(12),
-			height: theme.spacing(12)
+			width: '96px',
+			height: '96px'
 		},
 		avatarStyles: {
 			display: 'flex',

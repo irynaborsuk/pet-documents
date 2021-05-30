@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			color: theme.palette.secondary.dark
 		},
 		petPropertiesStyles: {
-			paddingLeft: '5px'
+			paddingLeft: theme.spacing(1)
 		}
 	})
 );

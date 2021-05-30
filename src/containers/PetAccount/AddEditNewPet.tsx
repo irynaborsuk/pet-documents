@@ -10,9 +10,17 @@ import {
 } from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { CircularProgress, createStyles, FormControl, InputAdornment, TextField } from '@material-ui/core';
+import {
+	CircularProgress,
+	createStyles,
+	Fab,
+	FormControl,
+	InputAdornment,
+	TextField,
+	useMediaQuery
+} from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { createMuiTheme, makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
 import { useHistory, useParams } from 'react-router';
 import { getDogBreedsReduxThunk } from '../../store/dog-breeds/effects';
@@ -30,10 +38,9 @@ import {
 import { loadCatBreedsReduxThunk } from '../../store/cat-breeds/effects';
 import { selectPet } from '../../store/pet/selectors';
 import { DatePicker } from '@material-ui/pickers';
-import { Today } from '@material-ui/icons';
+import { Add, Close, Create, RotateLeft, Today } from '@material-ui/icons';
 import { createPetReduxThunk, editPetReduxThunk, loadPetReduxThunk } from '../../store/pet/effects';
 import { resetPetStore } from '../../store/pet/actions';
-
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -55,6 +62,13 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		errorMessage: {
 			color: theme.palette.error.main
+		},
+		circleButtons: {
+			margin: 'theme.spacing(0.5), theme.spacing(1.5)',
+			'&:active': {
+				boxShadow: '0 0 0 white',
+				margin: 'theme.spacing(1), theme.spacing(2)'
+			}
 		}
 	})
 )
@@ -79,8 +93,11 @@ const genderOptions: AutocompleteOption<GENDER>[] = [
 	{ label: getGenderLabel[GENDER.FEMALE], value: GENDER.FEMALE }
 ]
 
+const theme = createMuiTheme({});
+
 const AddEditNewPet = () => {
 	const classes = useStyles();
+	const sm = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
 	const history = useHistory();
 	const { id } = useParams<{ id: string }>();
 	const pet: PetDataResponse | null = useSelector(selectPet);
@@ -175,7 +192,9 @@ const AddEditNewPet = () => {
 	}, [dispatch, editMode, id])
 
 	useEffect(() => {
-		return () => {dispatch(resetPetStore())}
+		return () => {
+			dispatch(resetPetStore())
+		}
 	}, [dispatch])
 
 	useEffect(() => {
@@ -349,40 +368,76 @@ const AddEditNewPet = () => {
 
 			<div className={[classes.formControl, classes.buttonsGroup].join(' ')}>
 				<div className={classes.buttonsGroup}>
-					<Button
-						name={'Reset'}
-						type={'reset'}
-						onClick={() => resetForm()}
-						backgroundColor={'var(--color-basic-yellow-light)'}
-						color={'var(--color-black-rgba)'}
-						height={'56px'}
-						padding={'0 20px'}
-					/>
+					{sm ?
+						<Button
+							name={'Reset'}
+							type={'reset'}
+							onClick={() => resetForm()}
+							backgroundColor={'var(--color-basic-yellow-light)'}
+							color={'var(--color-black-rgba)'}
+							height={'56px'}
+							padding={'0 20px'}
+						/>
+						:
+						<Fab
+							className={classes.circleButtons}
+							onClick={() => resetForm()}
+							color="secondary"
+						>
+							<RotateLeft/>
+						</Fab>
+					}
+
 				</div>
 
 				<div className={classes.buttonsGroup}>
-					<Button
-						name={'Cancel'}
-						type={'button'}
-						onClick={() => {
-							editMode ?
-								history.push(`/pet/${pet?._id}`) :
-								history.push('/pet-account')
-						}}
-						backgroundColor={'var(--color-basic-grey)'}
-						color={'var(--color-bright-red)'}
-						height={'56px'}
-						margin={'0 10px'}
-						padding={'0 20px'}
-					/>
-					<Button
-						name={!editMode ? 'Create' : 'Update'}
-						type={'submit'}
-						backgroundColor={'var(--color-basic-green)'}
-						color={'var(--color-basic-grey)'}
-						height={'56px'}
-						padding={'0 20px'}
-					/>
+					{sm ?
+						<Button
+							name={'Cancel'}
+							type={'button'}
+							onClick={() => {
+								editMode ?
+									history.push(`/pet/${pet?._id}`) :
+									history.push('/pet-account')
+							}}
+							backgroundColor={'var(--color-basic-grey)'}
+							color={'var(--color-bright-red)'}
+							height={'56px'}
+							margin={'0 10px'}
+							padding={'0 20px'}
+						/>
+						:
+						<Fab
+							className={classes.circleButtons}
+							onClick={() => {
+								editMode ?
+									history.push(`/pet/${pet?._id}`) :
+									history.push('/pet-account')
+							}}
+							color="default"
+						>
+							<Close/>
+						</Fab>
+					}
+
+					{sm ?
+						<Button
+							name={!editMode ? 'Create' : 'Update'}
+							type={'submit'}
+							backgroundColor={'var(--color-basic-green)'}
+							color={'var(--color-basic-grey)'}
+							height={'56px'}
+							padding={'0 20px'}
+						/>
+						:
+						<Fab
+							className={classes.circleButtons}
+							color="primary"
+							type={'submit'}
+						>
+							{!editMode ? <Add/> : <Create/>}
+						</Fab>
+					}
 				</div>
 			</div>
 		</form>

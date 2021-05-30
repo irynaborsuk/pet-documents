@@ -61,8 +61,6 @@ ReactDOM.render(
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
 
-// + TODO: All buttons cursor: pointer
-// TODO: User menu redesign
-// TODO: Height/Width should be hardcoded, theme.spacing should be used on margin/padding
+// + TODO: User menu redesign
 // TODO: birth day calculator doesn't work
 // TODO: Handle server errors with snackbars
