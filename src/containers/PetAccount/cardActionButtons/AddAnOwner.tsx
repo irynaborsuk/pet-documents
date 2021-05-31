@@ -13,6 +13,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import { createStyles, Theme } from '@material-ui/core/styles';
+import { useSnackbar } from 'notistack';
+import { loadPetReduxThunk } from '../../../store/pet/effects';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -26,6 +28,7 @@ const AddAnOwner = ({ petId }: any) => {
 	const classes = useStyles();
 	const [openAddOwner, setOpenAddOwner] = React.useState(false);
 	const dispatch = useDispatch();
+	const snackBar = useSnackbar();
 
 	const handleClickOpenAddOwner = () => {
 		setOpenAddOwner(true)
@@ -57,7 +60,8 @@ const AddAnOwner = ({ petId }: any) => {
 			const data = {
 				ownerEmail: values.ownerEmail
 			}
-			dispatch(addAnOwnerReduxThunk(petId, data));
+			dispatch(addAnOwnerReduxThunk(petId, data, snackBar));
+			dispatch(loadPetReduxThunk(petId, snackBar));
 			handleCloseAddOwner();
 		}
 	})

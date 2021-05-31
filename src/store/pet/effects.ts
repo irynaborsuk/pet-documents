@@ -11,62 +11,84 @@ import {
 	loadPetSuccess
 } from './actions';
 import { History } from 'history';
+import { ProviderContext } from 'notistack';
 
-export const createPetReduxThunk = (data: object, history: History) => {
+export const createPetReduxThunk = (
+	data: object,
+	history: History,
+	{ enqueueSnackbar }: ProviderContext
+) => {
 	return async (dispatch: Dispatch<any>) => {
 		dispatch(createPetPending());
 
-		await authorizedAxios.post('/pet/create', data)
-			.then((response) => {
-				dispatch(createPetSucceeded(response.data));
-				history.push('/pet-account');
-			})
-			.catch((error) => {
-				dispatch(createPetFailed(error))
-			})
+		try {
+			const response = await authorizedAxios.post('/pet/create', data);
+			dispatch(createPetSucceeded(response.data));
+			history.push('/pet-account');
+		} catch (error) {
+			dispatch(createPetFailed(error));
+			dispatch(() => enqueueSnackbar(
+				error?.data?.message ?? 'Something went wrong.',
+				{ variant: 'error' }
+			))
+		}
 	}
 }
 
-export const editPetReduxThunk = (petId: string, data: object, history: History) => {
+export const editPetReduxThunk = (
+	petId: string,
+	data: object,
+	history: History,
+	{ enqueueSnackbar }: ProviderContext
+) => {
 	return async (dispatch: Dispatch<any>) => {
 		dispatch(editPetPending())
 
-		await authorizedAxios.patch( `/pet/${petId}`, data).then(
-			(response) => {
-				dispatch(editPetSucceeded(response.data));
-				history.push(`/pet/${petId}`);
-			})
-			.catch((error) => {
-				dispatch(editPetFailed(error))
-			})
+		try {
+			const response = await authorizedAxios.patch(`/pet/${petId}`, data);
+			dispatch(editPetSucceeded(response.data));
+			history.push(`/pet/${petId}`);
+		} catch (error) {
+			dispatch(editPetFailed(error));
+			dispatch(() => enqueueSnackbar(
+				error?.data?.message ?? 'Something went wrong.',
+				{ variant: 'error' }
+			))
+		}
 	}
 }
 
-export const loadPetReduxThunk = (petId: string) => {
+export const loadPetReduxThunk = (petId: string, { enqueueSnackbar }: ProviderContext) => {
 	return async (dispatch: Dispatch<any>) => {
 		dispatch(loadPet());
 
-		await authorizedAxios.get(`/pet/${petId}`).then(
-			(response) => {
-				dispatch(loadPetSuccess(response.data));
-				console.log(response.data);
-			})
-			.catch((errorMessage) => {
-				dispatch(loadPetFailure(errorMessage))
-			})
+		try {
+			const response = await authorizedAxios.get(`/pet/${petId}`);
+			dispatch(loadPetSuccess(response.data));
+		} catch (error) {
+			dispatch(loadPetFailure(error));
+			dispatch(() => enqueueSnackbar(
+				error?.data?.message ?? 'Something went wrong.',
+				{ variant: 'error' }
+			))
+		}
 	}
 }
 
-export const deletePetReduxThunk = (petId: string, history: History) => {
+export const deletePetReduxThunk = (petId: string, history: History, { enqueueSnackbar }: ProviderContext) => {
 	return async (dispatch: Dispatch<any>) => {
 		dispatch(deletePetPending());
 
-		await authorizedAxios.delete(`/pet/${petId}`).then(() => {
+		try {
+			await authorizedAxios.delete(`/pet/${petId}`);
 			dispatch(deletePetSucceeded());
 			history.push('/pet-account');
-		})
-			.catch((error) => {
-				dispatch(deletePetFailed(error));
-			})
+		} catch (error) {
+			dispatch(deletePetFailed(error));
+			dispatch(() => enqueueSnackbar(
+				error?.data?.message ?? 'Something went wrong.',
+				{ variant: 'error' }
+			))
+		}
 	}
 }

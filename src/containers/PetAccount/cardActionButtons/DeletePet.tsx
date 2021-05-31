@@ -11,6 +11,7 @@ import { deletePetReduxThunk } from '../../../store/pet/effects';
 import { createStyles, Theme } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -24,6 +25,7 @@ const DeletePet = ({ petId }: any) => {
 	const classes = useStyles();
 	const [openDeleteButton, setOpenDeleteButton] = React.useState(false);
 	const dispatch = useDispatch();
+	const snackBar = useSnackbar();
 	const history = useHistory();
 
 	const handleClickOpenDeleteButton = () => {
@@ -58,7 +60,7 @@ const DeletePet = ({ petId }: any) => {
 						Cancel
 					</Button>
 					<Button
-						onClick={() => dispatch(deletePetReduxThunk(petId, history))}
+						onClick={() => dispatch(deletePetReduxThunk(petId, history, snackBar))}
 						color="primary" autoFocus>
 						Continue
 					</Button>

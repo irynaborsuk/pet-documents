@@ -4,10 +4,11 @@ import { AutocompleteOption, Breed } from '../types';
 export const calcDate = (date1: DateTime, date2: string) => {
 	const diff = date1.diff(DateTime.fromISO(date2), [
 		'years',
-		'month'
+		'month',
+		'days'
 	])
 
-	return `${diff.toFormat('y\' year(s)\', M\' mouth(s)\'')}`;
+	return `${diff.toFormat('y\' year(s)\', M\' mouth(s)\', d\' days(s)\'')}`;
 }
 
 export const mapBreedsToAutoCompleteOptions = (breeds: Breed[]): AutocompleteOption<string>[] => {

@@ -22,6 +22,7 @@ import AddAnOwner from './cardActionButtons/AddAnOwner';
 import { Edit } from '@material-ui/icons';
 import DeletePet from './cardActionButtons/DeletePet';
 import RemoveAnOwner from './cardActionButtons/RemoweAnOwner';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -68,11 +69,12 @@ const PetProfile = () => {
 	const pet: PetDataResponse | null = useSelector(selectPet);
 	const { id } = useParams<{ id: string }>();
 	const dispatch = useDispatch();
+	const snackBar = useSnackbar();
 	const history = useHistory();
 
 	useEffect(() => {
-		dispatch(loadPetReduxThunk(id));
-	}, [dispatch, id])
+		dispatch(loadPetReduxThunk(id, snackBar));
+	}, [dispatch, id, snackBar])
 
 	if (!pet) {
 		return <></>;

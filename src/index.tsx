@@ -18,6 +18,7 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import ownerReducer from './store/owner-store/reducer';
 import catFactsReducer from './store/cat-facts/reducer';
 import dogFactsReducer from './store/dog-facts/reducer';
+import { SnackbarProvider } from 'notistack';
 
 export interface RootState {
 	catBreeds: AppState<Breed[]>;
@@ -48,9 +49,18 @@ ReactDOM.render(
 		redirectUri={window.location.origin}
 	>
 		<Provider store={store}>
-			<MuiPickersUtilsProvider utils={LuxonUtils} locale={window.navigator.language}>
-				<App/>
-			</MuiPickersUtilsProvider>
+			<SnackbarProvider
+				maxSnack={3}
+				preventDuplicate={true}
+				anchorOrigin={{
+					vertical: "top",
+					horizontal: "right"
+				}}
+			>
+				<MuiPickersUtilsProvider utils={LuxonUtils} locale={window.navigator.language}>
+					<App/>
+				</MuiPickersUtilsProvider>
+			</SnackbarProvider>
 		</Provider>
 	</Auth0Provider>,
 	document.getElementById('root')
@@ -61,6 +71,5 @@ ReactDOM.render(
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
 
-// + TODO: User menu redesign
 // TODO: birth day calculator doesn't work
 // TODO: Handle server errors with snackbars

@@ -8,6 +8,7 @@ import { catFactsReduxThunk } from '../../store/cat-facts/effects';
 import { selectCatFacts } from '../../store/cat-facts/selectors';
 import { selectDogFacts } from '../../store/dog-facts/selectors';
 import { dogFactsReduxThunk } from '../../store/dog-facts/effects';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme:Theme) =>
 	createStyles({
@@ -54,6 +55,7 @@ const CarouselInfo = () => {
 	const sm = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
 	const classes = useStyles();
 	const dispatch = useDispatch();
+	const snackBar = useSnackbar();
 	const catsFacts: FactsTypes[] = useSelector(selectCatFacts);
 	const dogsFacts: FactsTypes[] = useSelector(selectDogFacts);
 
@@ -72,9 +74,9 @@ const CarouselInfo = () => {
 
 
 	useEffect(() => {
-		dispatch(catFactsReduxThunk());
-		dispatch(dogFactsReduxThunk());
-	}, [dispatch])
+		dispatch(catFactsReduxThunk(snackBar));
+		dispatch(dogFactsReduxThunk(snackBar));
+	}, [dispatch, snackBar])
 
 	return (
 		<Carousel

@@ -20,6 +20,7 @@
     "axios": "^0.21.1",
     "formik": "^2.2.6",
     "luxon": "^1.27.0",
+    "notistack": "^1.0.9",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-material-ui-carousel": "^2.2.2",

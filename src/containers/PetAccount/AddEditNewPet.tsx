@@ -41,6 +41,7 @@ import { DatePicker } from '@material-ui/pickers';
 import { Add, Close, Create, RotateLeft, Today } from '@material-ui/icons';
 import { createPetReduxThunk, editPetReduxThunk, loadPetReduxThunk } from '../../store/pet/effects';
 import { resetPetStore } from '../../store/pet/actions';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -64,10 +65,10 @@ const useStyles = makeStyles((theme: Theme) =>
 			color: theme.palette.error.main
 		},
 		circleButtons: {
-			margin: 'theme.spacing(0.5), theme.spacing(1.5)',
+			margin: '4px 10px 4px 10px',
 			'&:active': {
 				boxShadow: '0 0 0 white',
-				margin: 'theme.spacing(1), theme.spacing(2)'
+				margin: '6px 10px 2px 10px'
 			}
 		}
 	})
@@ -102,6 +103,7 @@ const AddEditNewPet = () => {
 	const { id } = useParams<{ id: string }>();
 	const pet: PetDataResponse | null = useSelector(selectPet);
 	const dispatch = useDispatch();
+	const snackBar = useSnackbar();
 	const dogBreedOptions: AutocompleteOption<string>[] = useSelector(selectDogBreedsAutocomplete);
 	const catBreedOptions: AutocompleteOption<string>[] = useSelector(selectCatBreedsAutocomplete);
 	const isDogBreedsLoaded = useSelector(selectIsDogBreedsLoaded);
@@ -181,15 +183,15 @@ const AddEditNewPet = () => {
 				notes: values.notes
 			}
 			!editMode
-				? dispatch(createPetReduxThunk(data, history))
-				: dispatch(editPetReduxThunk(id, data, history))
+				? dispatch(createPetReduxThunk(data, history, snackBar))
+				: dispatch(editPetReduxThunk(id, data, history, snackBar))
 			resetForm();
 		}
 	});
 
 	useEffect(() => {
-		if (editMode) dispatch(loadPetReduxThunk(id))
-	}, [dispatch, editMode, id])
+		if (editMode) dispatch(loadPetReduxThunk(id, snackBar))
+	}, [dispatch, editMode, id, snackBar])
 
 	useEffect(() => {
 		return () => {
@@ -200,14 +202,14 @@ const AddEditNewPet = () => {
 	useEffect(() => {
 		const selectedSpecies = values.species?.value?.toString() ?? '';
 		if (Number.parseInt(selectedSpecies) === SPECIES.DOG && !isDogBreedsLoaded) {
-			dispatch(getDogBreedsReduxThunk());
+			dispatch(getDogBreedsReduxThunk(snackBar));
 			return;
 		}
 		if (Number.parseInt(selectedSpecies) === SPECIES.CAT && !isCatBreedsLoaded) {
-			dispatch(loadCatBreedsReduxThunk());
+			dispatch(loadCatBreedsReduxThunk(snackBar));
 			return;
 		}
-	}, [dispatch, isCatBreedsLoaded, isDogBreedsLoaded, values.species]);
+	}, [dispatch, isCatBreedsLoaded, isDogBreedsLoaded, snackBar, values.species]);
 
 	return (
 

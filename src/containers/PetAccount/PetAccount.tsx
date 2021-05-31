@@ -19,6 +19,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { useHistory } from 'react-router';
 import { Announcement } from '@material-ui/icons';
 import CloseIcon from '@material-ui/icons/Close';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -74,7 +75,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			flexDirection: 'column'
 		},
 		fabButton: {
-			margin: 'theme.spacing(1), 0'
+			marginBottom: theme.spacing(1)
 		},
 		factsBlock: {
 			display: 'flex',
@@ -97,6 +98,7 @@ const theme = createMuiTheme({});
 const PetAccount = () => {
 	const classes = useStyles();
 	const dispatch = useDispatch();
+	const snackBar = useSnackbar();
 	const history = useHistory();
 	const { isAuthenticated } = useAuth0();
 	const userHasPets: boolean = useSelector(selectUserHasPets);
@@ -116,8 +118,8 @@ const PetAccount = () => {
 	};
 
 	useEffect(() => {
-		dispatch(loadPetsReduxThunk());
-	}, [dispatch])
+		dispatch(loadPetsReduxThunk(snackBar));
+	}, [dispatch, snackBar])
 
 	useEffect(() => {
 		return () => {

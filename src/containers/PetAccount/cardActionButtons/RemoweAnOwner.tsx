@@ -17,12 +17,15 @@ import { selectPet } from '../../../store/pet/selectors';
 import { removeAnOwnerReduxThunk } from '../../../store/owner-store/effects';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
+import { loadPetReduxThunk } from '../../../store/pet/effects';
 
 const RemoveAnOwner = ({ petId }: any) => {
 	const [openRemoveOwner, setOpenRemoveOwner] = useState(false);
 	const [selectedValue, setSelectedValue] = useState([]);
 	const pet: PetDataResponse | null = useSelector(selectPet);
 	const dispatch = useDispatch();
+	const snackBar = useSnackbar();
 
 	const handleClickOpenRemoveOwner = () => {
 		setOpenRemoveOwner(true)
@@ -55,7 +58,8 @@ const RemoveAnOwner = ({ petId }: any) => {
 				ownerId: values.ownerId
 			}
 			console.log(values.ownerId);
-			dispatch(removeAnOwnerReduxThunk(petId, data));
+			dispatch(removeAnOwnerReduxThunk(petId, data, snackBar));
+			dispatch(loadPetReduxThunk(petId, snackBar));
 		}
 	})
 

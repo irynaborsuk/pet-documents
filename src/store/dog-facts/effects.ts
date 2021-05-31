@@ -1,17 +1,21 @@
 import { Dispatch } from 'redux';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
 import { loadDogFactsFailed, loadDogFactsPending, loadDogFactsSuccess } from './actions';
+import { ProviderContext } from 'notistack';
 
-export const dogFactsReduxThunk = () => {
+export const dogFactsReduxThunk = ({ enqueueSnackbar }: ProviderContext) => {
 	return async (dispatch: Dispatch<any>) => {
 		dispatch(loadDogFactsPending());
 
-		await authorizedAxios.get('/static/dog-facts').then(
-			(response) => {
-				dispatch(loadDogFactsSuccess(response.data));
-			})
-			.catch((error) => {
-				dispatch(loadDogFactsFailed(error))
-			})
+		try {
+			const response = await authorizedAxios.get('/static/dog-facts');
+			dispatch(loadDogFactsSuccess(response.data));
+		} catch (error) {
+			dispatch(loadDogFactsFailed(error));
+			dispatch(() => enqueueSnackbar(
+				error?.data?.message ?? 'Something went wrong.',
+				{ variant: 'error' }
+			))
+		}
 	}
 }

@@ -1,18 +1,21 @@
 import { loadCatBreeds, loadCatBreedsFailure, loadCatBreedsSuccessful } from './actions';
 import { Dispatch } from 'redux';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
+import { ProviderContext } from 'notistack';
 
-export const loadCatBreedsReduxThunk = () => {
+export const loadCatBreedsReduxThunk = ({ enqueueSnackbar }: ProviderContext) => {
 	return async (dispatch: Dispatch<any>) => {
 		dispatch(loadCatBreeds());
 
-		return await authorizedAxios.get('/static/cat-breeds')
-			.then((response) => {
-				dispatch(loadCatBreedsSuccessful(response.data));
-				console.log(response.data);
-			})
-			.catch((error) => {
-				dispatch(loadCatBreedsFailure(error));
-			})
+		try {
+			const response = await authorizedAxios.get('/static/cat-breeds');
+			dispatch(loadCatBreedsSuccessful(response.data));
+		} catch (error) {
+			dispatch(loadCatBreedsFailure(error));
+			dispatch(() => enqueueSnackbar(
+				error?.data?.message ?? 'Something went wrong.',
+				{ variant: 'error' }
+			))
+		}
 	}
 }
