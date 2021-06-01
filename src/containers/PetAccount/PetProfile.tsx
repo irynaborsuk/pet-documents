@@ -119,7 +119,6 @@ const PetProfile = () => {
 						</CardActions>
 					</Grid>
 				</Grid>
-				{/*TODO: delete owner*/}
 				<CardContent>
 					<Grid container
 						  justify="center"

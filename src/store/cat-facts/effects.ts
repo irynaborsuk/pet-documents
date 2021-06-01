@@ -3,7 +3,7 @@ import { loadCatFactsFailed, loadCatFactsPending, loadCatFactsSuccess } from './
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
 import { ProviderContext } from 'notistack';
 
-export const catFactsReduxThunk = ({ enqueueSnackbar }: ProviderContext) => {
+export const loadCatFactsReduxThunk = ({ enqueueSnackbar }: ProviderContext) => {
 	return async (dispatch: Dispatch<any>) => {
 		dispatch(loadCatFactsPending());
 

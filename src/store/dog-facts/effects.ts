@@ -3,7 +3,7 @@ import authorizedAxios from '../../hooks/useAxiosInterceptors';
 import { loadDogFactsFailed, loadDogFactsPending, loadDogFactsSuccess } from './actions';
 import { ProviderContext } from 'notistack';
 
-export const dogFactsReduxThunk = ({ enqueueSnackbar }: ProviderContext) => {
+export const loadDogFactsReduxThunk = ({ enqueueSnackbar }: ProviderContext) => {
 	return async (dispatch: Dispatch<any>) => {
 		dispatch(loadDogFactsPending());
 

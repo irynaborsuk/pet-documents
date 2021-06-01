@@ -7,19 +7,19 @@ import {
 	useMediaQuery
 } from '@material-ui/core';
 import { createMuiTheme, makeStyles, Theme } from '@material-ui/core/styles';
-import { useAuth0 } from '@auth0/auth0-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUserHasPets } from '../../store/pets/selectors';
 import { loadPetsReduxThunk } from '../../store/pets/effects';
 import PetsAddCard from '../../components/PetsAddCard';
 import PetsCardsList from '../../components/PetsCardsList';
-import { resetPetsStore } from '../../store/pets/actions';
 import CarouselInfo from '../CaruselInfo/CarouselInfo';
 import AddIcon from '@material-ui/icons/Add';
 import { useHistory } from 'react-router';
 import { Announcement } from '@material-ui/icons';
 import CloseIcon from '@material-ui/icons/Close';
 import { useSnackbar } from 'notistack';
+import { loadCatFactsReduxThunk } from '../../store/cat-facts/effects';
+import { loadDogFactsReduxThunk } from '../../store/dog-facts/effects';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -100,7 +100,6 @@ const PetAccount = () => {
 	const dispatch = useDispatch();
 	const snackBar = useSnackbar();
 	const history = useHistory();
-	const { isAuthenticated } = useAuth0();
 	const userHasPets: boolean = useSelector(selectUserHasPets);
 	const sm = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
 	const [open, setOpen] = useState(false);
@@ -119,17 +118,9 @@ const PetAccount = () => {
 
 	useEffect(() => {
 		dispatch(loadPetsReduxThunk(snackBar));
+		dispatch(loadCatFactsReduxThunk(snackBar));
+		dispatch(loadDogFactsReduxThunk(snackBar));
 	}, [dispatch, snackBar])
-
-	useEffect(() => {
-		return () => {
-			dispatch(resetPetsStore())
-		}
-	}, [dispatch])
-
-	if (!isAuthenticated) {
-		return <h3>Please, sign in first to open a pet account!</h3>;
-	}
 
 	return (
 		<Grid
@@ -140,15 +131,10 @@ const PetAccount = () => {
 			<main
 				className={classes.scrollBox}
 			>
-				{
-					isAuthenticated && (
 
-						<Grid item container xs={12}>
-							{!userHasPets ? <PetsAddCard/> : <PetsCardsList/>}
-						</Grid>
-
-					)
-				}
+				<Grid item container xs={12}>
+					{!userHasPets ? <PetsAddCard/> : <PetsCardsList/>}
+				</Grid>
 			</main>
 
 			<footer
@@ -220,9 +206,7 @@ const PetAccount = () => {
 						</Snackbar>
 					</div>
 				}
-
 			</footer>
-
 		</Grid>
 	);
 }

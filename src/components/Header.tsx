@@ -10,7 +10,6 @@ import {
 import { useAuth0 } from '@auth0/auth0-react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
-import SignInButton from '../UI/SignInButton';
 import AppBar from '@material-ui/core/AppBar';
 import { useHistory } from 'react-router';
 import { ExitToApp } from '@material-ui/icons';
@@ -19,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		large: {
 			width: '64px',
-			height: '64px',
+			height: '64px'
 		},
 		cardStyles: {
 			display: 'flex',
@@ -46,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Header = () => {
 	const classes = useStyles();
-	const { user, isAuthenticated, logout } = useAuth0();
+	const { user, logout } = useAuth0();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const isMenuOpen = Boolean(anchorEl);
 	const history = useHistory();
@@ -68,25 +67,24 @@ const Header = () => {
 			open={isMenuOpen}
 			onClose={handleAvatarMenuClose}
 		>
-			{isAuthenticated && (
-				<Card className={classes.cardStyles}>
-					<Avatar src={user.picture} alt={user.name} className={classes.large}/>
-					<CardContent className={classes.cardStyles}>
-						<Typography variant="h6" color="textSecondary" component="p">
-							{user.name}
-						</Typography>
-						<Typography variant="body2" color="textSecondary" component="p">
-							{user.email}
-						</Typography>
-					</CardContent>
-				</Card>
-			)}
+
+			<Card className={classes.cardStyles}>
+				<Avatar src={user.picture} alt={user.name} className={classes.large}/>
+				<CardContent className={classes.cardStyles}>
+					<Typography variant="h6" color="textSecondary" component="p">
+						{user.name}
+					</Typography>
+					<Typography variant="body2" color="textSecondary" component="p">
+						{user.email}
+					</Typography>
+				</CardContent>
+			</Card>
 
 			<MenuItem
 				className={classes.logOutButton}
 				onClick={() => {
 					logout({ returnTo: window.location.origin });
-					setAnchorEl(null)
+					setAnchorEl(null);
 				}}
 			>
 				<ExitToApp/>
@@ -109,15 +107,11 @@ const Header = () => {
 						</MenuItem>
 					</div>
 
-					{isAuthenticated ?
-						<MenuItem
-							onClick={handleAvatarToggle}
-						>
-							<Avatar src={user.picture} alt={user.name}/>
-						</MenuItem>
-						:
-						<SignInButton/>
-					}
+					<MenuItem
+						onClick={handleAvatarToggle}
+					>
+						<Avatar src={user.picture} alt={user.name}/>
+					</MenuItem>
 				</Toolbar>
 			</AppBar>
 			{renderMenu}

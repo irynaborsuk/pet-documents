@@ -1,13 +1,12 @@
 import React from 'react';
 import { GENDER, PetsResponse, SPECIES } from '../types';
 import Grid from '@material-ui/core/Grid';
-import { Card, CardContent, CardHeader, createStyles, Fab } from '@material-ui/core';
+import { Card, CardContent, CardHeader, createStyles } from '@material-ui/core';
 import { calcDate } from '../utils/formatters';
 import femaleIcon from '../images/femaleIcon.svg';
 import maleIcon from '../images/maleIcon.svg';
 import catIcon from '../images/catIcon512.png';
 import dogIcon from '../images/dogIcon512.png';
-import AddIcon from '@material-ui/icons/Add';
 import { useHistory } from 'react-router';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
@@ -16,6 +15,9 @@ import { DateTime } from 'luxon';
 
 const useStyles = makeStyles(() =>
 	createStyles({
+		card: {
+			cursor: 'pointer'
+		},
 		cardContent: {
 			display: 'flex',
 			width: '100%',
@@ -52,6 +54,7 @@ const PetsCardsList = () => {
 						<Card
 							key={pet._id}
 							onClick={() => history.push(`/pet/${pet._id}`)}
+							className={classes.card}
 						>
 							<CardHeader title={pet.name}/>
 							<CardContent className={classes.cardContent}>

@@ -10,7 +10,6 @@ export default function dogBreedsReducer(
 	state = initialState,
 	action: DogBreedsActionTypes
 ) {
-	console.log(action)
 	switch (action.type) {
 		case GET_DOG_BREEDS:
 			return {

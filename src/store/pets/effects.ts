@@ -1,11 +1,11 @@
 import { Dispatch } from 'redux';
-import { loadPets, loadPetsFailure, loadPetsSuccess } from './actions';
+import { loadPetsPending, loadPetsFailure, loadPetsSuccess } from './actions';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
 import { ProviderContext } from 'notistack';
 
 export const loadPetsReduxThunk = ({ enqueueSnackbar }: ProviderContext) => {
 	return async (dispatch: Dispatch<any>) => {
-		dispatch(loadPets());
+		dispatch(loadPetsPending());
 
 		try {
 			const response = await authorizedAxios.get('/pets');

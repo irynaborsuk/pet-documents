@@ -57,7 +57,6 @@ const RemoveAnOwner = ({ petId }: any) => {
 			const data = {
 				ownerId: values.ownerId
 			}
-			console.log(values.ownerId);
 			dispatch(removeAnOwnerReduxThunk(petId, data, snackBar));
 			dispatch(loadPetReduxThunk(petId, snackBar));
 		}

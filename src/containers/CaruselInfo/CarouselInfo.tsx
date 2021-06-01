@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Card, createStyles, useMediaQuery } from '@material-ui/core';
 import Carousel from 'react-material-ui-carousel';
 import { createMuiTheme, makeStyles, Theme } from '@material-ui/core/styles';
 import { CarouselStyleProps, FactsTypes } from '../../types';
-import { useDispatch, useSelector } from 'react-redux';
-import { catFactsReduxThunk } from '../../store/cat-facts/effects';
+import { useSelector } from 'react-redux';
 import { selectCatFacts } from '../../store/cat-facts/selectors';
 import { selectDogFacts } from '../../store/dog-facts/selectors';
-import { dogFactsReduxThunk } from '../../store/dog-facts/effects';
-import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme:Theme) =>
 	createStyles({
@@ -21,7 +18,7 @@ const useStyles = makeStyles((theme:Theme) =>
 			minHeight: '150px',
 			padding: theme.spacing(1),
 			[theme.breakpoints.up('sm')]: {
-				padding: theme.spacing(9),
+				padding: theme.spacing(0, 9,0,9),
 			},
 		},
 		cardContent: {
@@ -54,15 +51,12 @@ const theme = createMuiTheme({});
 const CarouselInfo = () => {
 	const sm = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
 	const classes = useStyles();
-	const dispatch = useDispatch();
-	const snackBar = useSnackbar();
 	const catsFacts: FactsTypes[] = useSelector(selectCatFacts);
 	const dogsFacts: FactsTypes[] = useSelector(selectDogFacts);
 
 	const items: Array<object> = [];
 	items.push(...catsFacts, ...dogsFacts);
 	shuffle(items);
-	console.log(items);
 
 	function shuffle(a: any) {
 		for (let i = a.length - 1; i > 0; i--) {
@@ -71,12 +65,6 @@ const CarouselInfo = () => {
 		}
 		return a;
 	}
-
-
-	useEffect(() => {
-		dispatch(catFactsReduxThunk(snackBar));
-		dispatch(dogFactsReduxThunk(snackBar));
-	}, [dispatch, snackBar])
 
 	return (
 		<Carousel

@@ -65,10 +65,10 @@ const useStyles = makeStyles((theme: Theme) =>
 			color: theme.palette.error.main
 		},
 		circleButtons: {
-			margin: '4px 10px 4px 10px',
+			margin: theme.spacing(0.5, 1.3, 0.5, 1.3),
 			'&:active': {
 				boxShadow: '0 0 0 white',
-				margin: '6px 10px 2px 10px'
+				margin: theme.spacing(0.8, 1.3, 0.3, 1.3),
 			}
 		}
 	})
@@ -228,7 +228,6 @@ const AddEditNewPet = () => {
 				error={!!(touched.name && errors.name)}
 				helperText={touched.name && errors.name}
 			/>
-			{/*TODO: getOptionSelected - solve the error*/}
 			<FormControl variant="outlined" className={classes.formControl}>
 				<Autocomplete
 					value={values.species}
@@ -238,7 +237,6 @@ const AddEditNewPet = () => {
 					}}
 					options={speciesOptions}
 					getOptionLabel={(option) => option.label}
-					// getOptionSelected={(option, value) => option.label === value.label}
 					renderInput={(params) =>
 						<TextField
 							{...params}

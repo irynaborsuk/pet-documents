@@ -23,7 +23,6 @@ export const addAnOwnerReduxThunk = (
 			dispatch(addAnOwnerSucceeded(res.data));
 		} catch (error) {
 			dispatch(addAnOwnerFailed(error));
-			console.log(error?.data?.message ?? 'Something went wrong.');
 			dispatch(() => enqueueSnackbar(
 				error?.data?.message ?? 'Something went wrong.',
 				{ variant: 'error' }
