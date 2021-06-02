@@ -1,4 +1,4 @@
-import { LOAD_PETS, LOAD_PETS_FAILURE, LOAD_PETS_SUCCESS, PetsActionType } from './types';
+import { LOAD_PETS_PENDING, LOAD_PETS_FAILURE, LOAD_PETS_SUCCESS, PetsActionType, RESET_PETS_STORE } from './types';
 
 const initialState = {
 	isLoading: false,
@@ -11,7 +11,7 @@ export default function petsReducer(
 	action: PetsActionType
 ) {
 	switch (action.type) {
-		case LOAD_PETS:
+		case LOAD_PETS_PENDING:
 			return {
 				...state,
 				isLoading: true,
@@ -31,6 +31,12 @@ export default function petsReducer(
 				isLoading: false,
 				data: [],
 				errorMessage: action.payload
+			}
+		case RESET_PETS_STORE:
+			return {
+				...state,
+				isLoading: false,
+				data:  [],
 			}
 		default:
 			return state

@@ -10,22 +10,33 @@ import { Provider } from 'react-redux';
 import dogBreedsReducer from './store/dog-breeds/reducer';
 import { catBreedsReducer } from './store/cat-breeds/reducer';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { AppState, Breed, PetDataResponse } from './types';
+import { AppState, Breed, FactsTypes, PetDataResponse, PetsResponse } from './types';
 import petsReducer from './store/pets/reducer';
 import petReducer from './store/pet/reducer';
+import LuxonUtils from '@date-io/luxon';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import ownerReducer from './store/owner-store/reducer';
+import catFactsReducer from './store/cat-facts/reducer';
+import dogFactsReducer from './store/dog-facts/reducer';
+import { SnackbarProvider } from 'notistack';
 
 export interface RootState {
 	catBreeds: AppState<Breed[]>;
 	dogBreeds: AppState<Breed[]>;
-	pets: AppState<PetDataResponse[]>;
-	pet: AppState<PetDataResponse[]>
+	catFacts: AppState<FactsTypes[]>;
+	dogFacts: AppState<FactsTypes[]>;
+	pets: AppState<PetsResponse[]>;
+	pet: AppState<PetDataResponse | null>;
 }
 
 const rootReducer = combineReducers({
 	catBreeds: catBreedsReducer,
 	dogBreeds: dogBreedsReducer,
+	catFacts: catFactsReducer,
+	dogFacts: dogFactsReducer,
 	pets: petsReducer,
 	pet: petReducer,
+	owner: ownerReducer
 })
 
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
@@ -38,7 +49,18 @@ ReactDOM.render(
 		redirectUri={window.location.origin}
 	>
 		<Provider store={store}>
-			<App/>
+			<SnackbarProvider
+				maxSnack={3}
+				preventDuplicate={true}
+				anchorOrigin={{
+					vertical: "top",
+					horizontal: "right"
+				}}
+			>
+				<MuiPickersUtilsProvider utils={LuxonUtils} locale={window.navigator.language}>
+					<App/>
+				</MuiPickersUtilsProvider>
+			</SnackbarProvider>
 		</Provider>
 	</Auth0Provider>,
 	document.getElementById('root')

@@ -24,10 +24,10 @@ export const useAxiosInterceptors = () => {
 		response => {
 			return response;
 		}, function (error) {
-			if (error.response.status === 401) {
+			if (error?.response?.status === 401) {
 				loginWithRedirect();
 			}
-			return Promise.reject(error.response);
+			return Promise.reject(error?.response ?? error);
 		}
 	)
 };

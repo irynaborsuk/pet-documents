@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Card, createStyles, useMediaQuery } from '@material-ui/core';
 import Carousel from 'react-material-ui-carousel';
 import { createMuiTheme, makeStyles, Theme } from '@material-ui/core/styles';
-import { CarouselStyleProps } from '../../types';
-import authorizedAxios from '../../hooks/useAxiosInterceptors';
+import { CarouselStyleProps, FactsTypes } from '../../types';
+import { useSelector } from 'react-redux';
+import { selectCatFacts } from '../../store/cat-facts/selectors';
+import { selectDogFacts } from '../../store/dog-facts/selectors';
 
 const useStyles = makeStyles((theme:Theme) =>
 	createStyles({
@@ -14,9 +16,9 @@ const useStyles = makeStyles((theme:Theme) =>
 			fontSize: 'larger',
 			fontFamily: 'cursive',
 			minHeight: '150px',
-			padding: '10px',
+			padding: theme.spacing(1),
 			[theme.breakpoints.up('sm')]: {
-				padding: '0 70px',
+				padding: theme.spacing(0, 9,0,9),
 			},
 		},
 		cardContent: {
@@ -32,7 +34,6 @@ const useStyles = makeStyles((theme:Theme) =>
 		},
 		cardContentItem: {
 			display: 'flex',
-
 		},
 	})
 )
@@ -45,35 +46,17 @@ const navButtonStyle: CarouselStyleProps = {
 	}
 }
 
-/*const items = [
-	{
-		name: "Cat info",
-		description: "Some ifo about cat's food",
-		color: "#64ACC8"
-	},
-	{
-		name: "Cat 2 info",
-		description: "Some information about cats treatments",
-		color: "#7D85B1"
-	},
-	{
-		name: "Dog info",
-		description: "Some advertising for dog's food",
-		color: "#CE7E78"
-	}
-]*/
-
 const theme = createMuiTheme({});
 
 const CarouselInfo = () => {
 	const sm = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
 	const classes = useStyles();
-	const [catsFacts, setCatsFacts] = useState([]);
-	const [dogsFacts, setDogsFacts] = useState([]);
+	const catsFacts: FactsTypes[] = useSelector(selectCatFacts);
+	const dogsFacts: FactsTypes[] = useSelector(selectDogFacts);
+
 	const items: Array<object> = [];
 	items.push(...catsFacts, ...dogsFacts);
 	shuffle(items);
-	console.log(items);
 
 	function shuffle(a: any) {
 		for (let i = a.length - 1; i > 0; i--) {
@@ -82,29 +65,6 @@ const CarouselInfo = () => {
 		}
 		return a;
 	}
-
-	const getCatFacts = async () => {
-		try {
-			const response = await authorizedAxios.get('/static/cat-facts')
-			setCatsFacts(response.data);
-		} catch (error) {
-
-		}
-	}
-
-	const getDogsFacts = async () => {
-		try {
-			const response = await authorizedAxios.get('/static/dog-facts')
-			setDogsFacts(response.data);
-		} catch (error) {
-
-		}
-	}
-
-	useEffect(() => {
-		getCatFacts().then();
-		getDogsFacts().then();
-	}, [])
 
 	return (
 		<Carousel

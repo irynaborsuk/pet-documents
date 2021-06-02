@@ -6,10 +6,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import List from '@material-ui/core/List';
 import { useHistory } from 'react-router';
 import HomeIcon from '@material-ui/icons/Home';
-import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
+		root: {
+			width: '250px'
+		},
 		homeButton: {
 			display: 'flex',
 			justifyContent: 'center'
@@ -23,7 +26,7 @@ const NavigationList = () => {
 	const classes = useStyles();
 	const history = useHistory();
 	return (
-		<List>
+		<List className={classes.root}>
 			<ListItem
 				className={classes.homeButton}
 				button

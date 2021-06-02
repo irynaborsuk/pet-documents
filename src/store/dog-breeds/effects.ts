@@ -1,22 +1,23 @@
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
 import { Dispatch } from 'redux';
 import { getDogBreedFailure, getDogBreeds, getDogBreedsSuccess } from './actions';
+import { ProviderContext } from 'notistack';
 
-export const getDogBreedsReduxThunk = () => {
+export const getDogBreedsReduxThunk = ({ enqueueSnackbar }: ProviderContext) => {
 	return async (dispatch: Dispatch<any>) => {
 			dispatch(getDogBreeds());
 
-		 return await authorizedAxios.get('/static/dog-breeds')
-			.then((response) => {
-				console.log(response.data);
-				dispatch(getDogBreedsSuccess(response.data))
-			})
-			.catch((error) => {
-				dispatch(getDogBreedFailure(error))
-			})
-
+		try {
+			const response = await authorizedAxios.get('/static/dog-breeds');
+			dispatch(getDogBreedsSuccess(response.data))
+		} catch (error) {
+			dispatch(getDogBreedFailure(error));
+			dispatch(() => enqueueSnackbar(
+				error?.data?.message ?? 'Something went wrong.',
+				{ variant: 'error' }
+			))
+		}
 	}
-
 
 	/* https://github.com/reduxjs/redux-thunk/blob/master/src/index.js
 

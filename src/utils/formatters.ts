@@ -1,19 +1,18 @@
-import { AppState } from '../types';
 import { DateTime } from 'luxon';
-
-export const getInitialState = <T>(): AppState<T | null> => {
-	return {
-		isLoading: false,
-		data: [],
-		errorMessage: null
-	};
-}
+import { AutocompleteOption, Breed } from '../types';
 
 export const calcDate = (date1: DateTime, date2: string) => {
 	const diff = date1.diff(DateTime.fromISO(date2), [
-		"years",
-		"month",
+		'years',
+		'month',
+		'days'
 	])
 
-	return `Age: ${diff.toFormat("y' year(s)', M' mouth(s)'")}`;
+	return `${diff.toFormat('y\' year(s)\', M\' mouth(s)\', d\' days(s)\'')}`;
+}
+
+export const mapBreedsToAutoCompleteOptions = (breeds: Breed[]): AutocompleteOption<string>[] => {
+	return breeds.map(({ _id, name }) => {
+		return { label: name, value: _id }
+	});
 }

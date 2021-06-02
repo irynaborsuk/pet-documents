@@ -12,7 +12,7 @@ code {
     monospace;
 }
 
-/* use only for my own Button presentation component */
+/* use only for my Button presentation component */
 :root {
   --color-basic-green: #008080;
   --color-basic-yellow: #ffb74d;

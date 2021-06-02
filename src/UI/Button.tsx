@@ -13,13 +13,20 @@ const useStyles = makeStyles((theme: Theme) =>
 			textTransform: 'uppercase',
 			letterSpacing: '2px',
 			fontSize: '12px',
-			padding: '5px 10px',
-			borderRadius: '5px',
+			padding: theme.spacing(0.6, 1.3, 0.6, 1.3),
+			borderRadius: theme.spacing(1),
 			border: '1px solid rgba(0,0,0,0.3)',
 			borderBottomWidth: '3px',
+			boxShadow: '2px 1px 2px gray',
+			margin: theme.spacing(0.5, 1.3, 0.5, 1.3),
+			cursor: 'pointer',
 			'&:hover': {
 				backgroundColor: 'var(--color-hover-grey)',
 				borderColor: 'var(--color-black-rgba)'
+			},
+			'&:active': {
+				boxShadow: '0 0 0 white',
+				margin: theme.spacing(0.8, 1.3, 0.3, 1.3),
 			}
 		}
 	})

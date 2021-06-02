@@ -30,9 +30,22 @@ export interface InitialPetData {
 	notes?: string
 }
 
+export interface PetsResponse {
+	vaccinations: Array<any>,
+	owners: Array<string>,
+	_id: string,
+	name: string,
+	colour: string,
+	notes: string,
+	species: number,
+	breed: Breed,
+	gender: number,
+	dateOfBirth: string
+}
+
 export interface PetDataResponse {
 	vaccinations: Array<any>,
-	owners: Array<OwnerData>,
+	owners: Array<IOwnerData>,
 	_id: string,
 	name: string,
 	colour: string,
@@ -43,11 +56,19 @@ export interface PetDataResponse {
 	dateOfBirth: string
 }
 
-export interface OwnerData {
+export interface IOwnerData {
 	user_id: string,
 	email: string,
 	given_name: string,
 	family_name: string
+}
+
+export interface IAddAnOwner {
+	ownerEmail: string
+}
+
+export interface IRemoveAnOwnerId {
+	ownerId: string
 }
 
 export interface AutocompleteOption<T> {
@@ -64,6 +85,11 @@ export interface BreedId extends Breed {
 	__v: number
 }
 
+export interface FactsTypes {
+	_id: string;
+	name: string;
+}
+
 export interface CarouselStyleProps {
 	className: string,
 	style: React.CSSProperties
@@ -72,6 +98,6 @@ export interface CarouselStyleProps {
 
 export interface AppState<T> {
 	isLoading: boolean;
-	data: T | Array<any>;
-	errorMessage: string | null;
+	data: T;
+	errorMessage: string;
 }

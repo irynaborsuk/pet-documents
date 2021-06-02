@@ -5,22 +5,43 @@ import {
 	getGenderLabel,
 	getSpeciesLabel,
 	InitialPetData,
+	PetDataResponse,
 	SPECIES
 } from '../../types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { CircularProgress, createStyles, FormControl, InputAdornment, TextField } from '@material-ui/core';
+import {
+	CircularProgress,
+	createStyles,
+	Fab,
+	FormControl,
+	InputAdornment,
+	TextField,
+	useMediaQuery
+} from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { createMuiTheme, makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '../../UI/Button';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { getDogBreedsReduxThunk } from '../../store/dog-breeds/effects';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectDogBreeds, selectIsDogBreedsLoaded, selectIsDogBreedsLoading } from '../../store/dog-breeds/selectors';
-import { selectCatBreeds, selectIsCatBreedsLoaded, selectIsCatBreedsLoading } from '../../store/cat-breeds/selectors';
+import {
+	selectDogBreedsAutocomplete,
+	selectIsDogBreedsLoaded,
+	selectIsDogBreedsLoading
+} from '../../store/dog-breeds/selectors';
+import {
+	selectCatBreedsAutocomplete,
+	selectIsCatBreedsLoaded,
+	selectIsCatBreedsLoading
+} from '../../store/cat-breeds/selectors';
 import { loadCatBreedsReduxThunk } from '../../store/cat-breeds/effects';
-import authorizedAxios from '../../hooks/useAxiosInterceptors';
-
+import { selectPet } from '../../store/pet/selectors';
+import { DatePicker } from '@material-ui/pickers';
+import { Add, Close, Create, RotateLeft, Today } from '@material-ui/icons';
+import { createPetReduxThunk, editPetReduxThunk, loadPetReduxThunk } from '../../store/pet/effects';
+import { resetPetStore } from '../../store/pet/actions';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -33,29 +54,32 @@ const useStyles = makeStyles((theme: Theme) =>
 			display: 'flex',
 			margin: theme.spacing(1),
 			width: '100%',
-			maxWidth: '900px'
+			maxWidth: '1000px'
 		},
 		buttonsGroup: {
 			display: 'flex',
-			justifyContent: 'space-between'
+			justifyContent: 'space-between',
+			alignItems: 'center'
 		},
 		errorMessage: {
 			color: theme.palette.error.main
 		},
-		selectedField: {
-			display: 'flex',
-			flexDirection: 'column',
-			alignItems: 'baseline'
+		circleButtons: {
+			margin: theme.spacing(0.5, 1.3, 0.5, 1.3),
+			'&:active': {
+				boxShadow: '0 0 0 white',
+				margin: theme.spacing(0.8, 1.3, 0.3, 1.3),
+			}
 		}
 	})
 )
 
-const initialValues: InitialPetData = {
+const emptyInitialState = {
 	name: '',
 	species: null,
 	breed: null,
 	gender: null,
-	dateOfBirth: '',
+	dateOfBirth: null,
 	colour: '',
 	notes: ''
 }
@@ -70,16 +94,68 @@ const genderOptions: AutocompleteOption<GENDER>[] = [
 	{ label: getGenderLabel[GENDER.FEMALE], value: GENDER.FEMALE }
 ]
 
-const AddNewPet = () => {
+const theme = createMuiTheme({});
+
+const AddEditNewPet = () => {
 	const classes = useStyles();
+	const sm = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
 	const history = useHistory();
+	const { id } = useParams<{ id: string }>();
+	const pet: PetDataResponse | null = useSelector(selectPet);
 	const dispatch = useDispatch();
-	const dogBreeds = useSelector(selectDogBreeds);
+	const snackBar = useSnackbar();
+	const dogBreedOptions: AutocompleteOption<string>[] = useSelector(selectDogBreedsAutocomplete);
+	const catBreedOptions: AutocompleteOption<string>[] = useSelector(selectCatBreedsAutocomplete);
 	const isDogBreedsLoaded = useSelector(selectIsDogBreedsLoaded);
-	const catBreeds = useSelector(selectCatBreeds);
 	const isCatBreedsLoaded = useSelector(selectIsCatBreedsLoaded);
 	const isCatBreedsLoading = useSelector(selectIsCatBreedsLoading);
 	const isDogBreedsLoading = useSelector(selectIsDogBreedsLoading);
+
+	const editMode: boolean = !!id;
+
+	const getBreedsOptions = (selectedSpecies: SPECIES | undefined): AutocompleteOption<string>[] => {
+		if (selectedSpecies === SPECIES.CAT) {
+			return catBreedOptions;
+		}
+		if (selectedSpecies === SPECIES.DOG) {
+			return dogBreedOptions;
+		}
+		return [];
+	}
+
+	const initialValues: InitialPetData | any = editMode
+		? {
+			name: pet?.name || '',
+			species: speciesOptions.find(({ value }) => value === pet?.species) || null,
+			breed: getBreedsOptions(pet?.species).find(({ value }) => value === pet?.breed._id) || null,
+			gender: genderOptions.find(({ value }) => value === pet?.gender) || null,
+			dateOfBirth: pet?.dateOfBirth || null,
+			colour: pet?.colour || '',
+			notes: pet?.notes || ''
+		}
+		: emptyInitialState
+
+	const validationSchema = Yup.object({
+		name: Yup.string()
+			.matches(/[a-zA-Z]/, 'Name must contain Latin letters.')
+			.max(40, 'Must be 40 characters or less')
+			.required('Required'),
+		species: Yup.object()
+			.nullable() // you need .nullable() if initialState has type of null (to show appropriate error massage at least)
+			.required('Required'),
+		breed: Yup.object()
+			.nullable()
+			.required('Required'),
+		gender: Yup.object()
+			.nullable()
+			.required('Required'),
+		dateOfBirth: Yup.string()
+			.nullable()
+			.required('Required'),
+		colour: Yup.string()
+			.matches(/[a-zA-Z]/, 'Animal colour can not be a number, please use Latin letters instead.'),
+		notes: Yup.string()
+	});
 
 	const {
 		handleSubmit,
@@ -92,27 +168,9 @@ const AddNewPet = () => {
 		resetForm
 	} = useFormik({
 		initialValues,
-		validationSchema: Yup.object({
-			name: Yup.string()
-				.matches(/[a-zA-Z]/, 'Name must contain Latin letters.')
-				.max(40, 'Must be 40 characters or less')
-				.required('Required'),
-			species: Yup.object()
-				.nullable() // you need .nullable() if initialState has type of null (to show appropriate error massage at least)
-				.required('Required'),
-			breed: Yup.object()
-				.nullable()
-				.required('Required'),
-			gender: Yup.object()
-				.nullable()
-				.required('Required'),
-			dateOfBirth: Yup.string()
-				.required('Required'),
-			colour: Yup.string()
-				.matches(/[a-zA-Z]/, 'Animal colour can not be a number, please use Latin letters instead.'),
-			notes: Yup.string()
-		}),
-		onSubmit: async (values) => {
+		validationSchema,
+		enableReinitialize: true,
+		onSubmit: (values) => {
 			const selectedSpecies: SPECIES = Number.parseInt(values.species?.value?.toString() || '');
 			const selectedGender: GENDER = Number.parseInt(values.gender?.value?.toString() || '');
 			const data = {
@@ -124,31 +182,39 @@ const AddNewPet = () => {
 				colour: values.colour,
 				notes: values.notes
 			}
-			await authorizedAxios.post('/pet/create', data)
-				.then((response) => {
-					console.log(response.data);
-					{/*TODO: що далі з response.data) робити*/}
-					resetForm();
-					history.push('/pet-account');
-				})
+			!editMode
+				? dispatch(createPetReduxThunk(data, history, snackBar))
+				: dispatch(editPetReduxThunk(id, data, history, snackBar))
+			resetForm();
 		}
 	});
 
 	useEffect(() => {
+		if (editMode) dispatch(loadPetReduxThunk(id, snackBar))
+	}, [dispatch, editMode, id, snackBar])
+
+	useEffect(() => {
+		return () => {
+			dispatch(resetPetStore())
+		}
+	}, [dispatch])
+
+	useEffect(() => {
 		const selectedSpecies = values.species?.value?.toString() ?? '';
 		if (Number.parseInt(selectedSpecies) === SPECIES.DOG && !isDogBreedsLoaded) {
-			dispatch(getDogBreedsReduxThunk());
+			dispatch(getDogBreedsReduxThunk(snackBar));
 			return;
 		}
 		if (Number.parseInt(selectedSpecies) === SPECIES.CAT && !isCatBreedsLoaded) {
-			dispatch(loadCatBreedsReduxThunk());
+			dispatch(loadCatBreedsReduxThunk(snackBar));
 			return;
 		}
-	}, [values.species]);
+	}, [dispatch, isCatBreedsLoaded, isDogBreedsLoaded, snackBar, values.species]);
 
 	return (
 
 		<form onSubmit={handleSubmit} className={classes.form}>
+			{editMode ? <h3>Edit pet's account</h3> : null}
 			<TextField
 				className={classes.formControl}
 				label="Pet's Name"
@@ -162,7 +228,6 @@ const AddNewPet = () => {
 				error={!!(touched.name && errors.name)}
 				helperText={touched.name && errors.name}
 			/>
-
 			<FormControl variant="outlined" className={classes.formControl}>
 				<Autocomplete
 					value={values.species}
@@ -172,7 +237,6 @@ const AddNewPet = () => {
 					}}
 					options={speciesOptions}
 					getOptionLabel={(option) => option.label}
-					getOptionSelected={(option, value) => option.label === value.label}
 					renderInput={(params) =>
 						<TextField
 							{...params}
@@ -193,14 +257,12 @@ const AddNewPet = () => {
 					onChange={(event, newValue: any) => {
 						setFieldValue('breed', newValue);
 					}}
-					options={(+(values?.species ? values.species.value : '') === SPECIES.DOG ? dogBreeds : catBreeds)
-						.map(({_id, name}) => {
-							return {
-								label: name,
-								value: _id
-							}})}
+					options={(
+						+(values?.species ? values.species.value : '') === SPECIES.DOG ?
+							dogBreedOptions :
+							catBreedOptions
+					)}
 					getOptionLabel={(option) => option.label}
-					getOptionSelected={(option, value) => option.label === value.label}
 					renderInput={(params) =>
 						<TextField
 							{...params} // every time you need necessary rewrite params to the additions
@@ -236,7 +298,6 @@ const AddNewPet = () => {
 					}}
 					options={genderOptions}
 					getOptionLabel={(option) => option.label}
-					getOptionSelected={(option, value) => option.label === value.label}
 					renderInput={(params) =>
 						<TextField
 							{...params}
@@ -251,22 +312,30 @@ const AddNewPet = () => {
 				/>
 			</FormControl>
 
-			<TextField
+			<DatePicker
 				className={classes.formControl}
+				showTodayButton
 				label="Pet's date of birth"
-				InputLabelProps={{
-					shrink: true
-				}}
-				variant="outlined"
-				id="dateOfBirth"
+				format="dd/MM/yyyy"
+				margin="normal"
+				inputVariant="outlined"
+				id="date-picker-dialog"
 				name="dateOfBirth"
-				type="date"
-				onChange={handleChange}
-				onBlur={handleBlur}
+				onChange={(newDate) => {
+					setFieldValue('dateOfBirth', newDate);
+				}}
 				value={values.dateOfBirth}
 				error={!!(touched.dateOfBirth && errors.dateOfBirth)}
 				helperText={touched.dateOfBirth && errors.dateOfBirth}
+				InputProps={{
+					endAdornment: (
+						<InputAdornment position="end">
+							<Today/>
+						</InputAdornment>
+					)
+				}}
 			/>
+
 			<TextField
 				className={classes.formControl}
 				label="Animal Colour"
@@ -280,6 +349,7 @@ const AddNewPet = () => {
 				error={!!(touched.colour && errors.colour)}
 				helperText={touched.colour && errors.colour}
 			/>
+
 			<TextField
 				className={classes.formControl}
 				label="Special notes about animal"
@@ -298,42 +368,81 @@ const AddNewPet = () => {
 
 			<div className={[classes.formControl, classes.buttonsGroup].join(' ')}>
 				<div className={classes.buttonsGroup}>
-					<Button
-						name={'Reset'}
-						type={'reset'}
-						onClick={() => resetForm()}
-						backgroundColor={'var(--color-basic-yellow-light)'}
-						color={'var(--color-black-rgba)'}
-						height={'56px'}
-						padding={'0 20px'}
-					/>
+					{sm ?
+						<Button
+							name={'Reset'}
+							type={'reset'}
+							onClick={() => resetForm()}
+							backgroundColor={'var(--color-basic-yellow-light)'}
+							color={'var(--color-black-rgba)'}
+							height={'56px'}
+							padding={'0 20px'}
+						/>
+						:
+						<Fab
+							className={classes.circleButtons}
+							onClick={() => resetForm()}
+							color="secondary"
+						>
+							<RotateLeft/>
+						</Fab>
+					}
+
 				</div>
 
 				<div className={classes.buttonsGroup}>
-					<Button
-						name={'Cancel'}
-						type={'button'}
-						onClick={() => {
-							history.push('/pet-account')
-						}}
-						backgroundColor={'var(--color-basic-grey)'}
-						color={'var(--color-bright-red)'}
-						height={'56px'}
-						margin={'0 10px'}
-						padding={'0 20px'}
-					/>
-					<Button
-						name={'Create'}
-						type={'submit'}
-						backgroundColor={'var(--color-basic-green)'}
-						color={'var(--color-basic-grey)'}
-						height={'56px'}
-						padding={'0 20px'}
-					/>
+					{sm ?
+						<Button
+							name={'Cancel'}
+							type={'button'}
+							onClick={() => {
+								editMode ?
+									history.push(`/pet/${pet?._id}`) :
+									history.push('/pet-account')
+							}}
+							backgroundColor={'var(--color-basic-grey)'}
+							color={'var(--color-bright-red)'}
+							height={'56px'}
+							margin={'0 10px'}
+							padding={'0 20px'}
+						/>
+						:
+						<Fab
+							className={classes.circleButtons}
+							onClick={() => {
+								editMode ?
+									history.push(`/pet/${pet?._id}`) :
+									history.push('/pet-account')
+							}}
+							color="default"
+						>
+							<Close/>
+						</Fab>
+					}
+
+					{sm ?
+						<Button
+							name={!editMode ? 'Create' : 'Update'}
+							type={'submit'}
+							backgroundColor={'var(--color-basic-green)'}
+							color={'var(--color-basic-grey)'}
+							height={'56px'}
+							padding={'0 20px'}
+						/>
+						:
+						<Fab
+							className={classes.circleButtons}
+							color="primary"
+							type={'submit'}
+						>
+							{!editMode ? <Add/> : <Create/>}
+						</Fab>
+					}
 				</div>
 			</div>
 		</form>
+
 	);
 };
 
-export default AddNewPet;
+export default AddEditNewPet;

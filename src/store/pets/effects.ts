@@ -1,18 +1,21 @@
-import { Dispatch } from 'react';
-import { loadPets, loadPetsFailure, loadPetsSuccess } from './actions';
+import { Dispatch } from 'redux';
+import { loadPetsPending, loadPetsFailure, loadPetsSuccess } from './actions';
 import authorizedAxios from '../../hooks/useAxiosInterceptors';
+import { ProviderContext } from 'notistack';
 
-export const loadPetsReduxThunk = () => {
+export const loadPetsReduxThunk = ({ enqueueSnackbar }: ProviderContext) => {
 	return async (dispatch: Dispatch<any>) => {
-		dispatch(loadPets());
+		dispatch(loadPetsPending());
 
-		await authorizedAxios.get('/pets').then(
-			(response) => {
-				console.log(response.data);
-				dispatch(loadPetsSuccess(response.data));
-			})
-			.catch((errorMessage) => {
-				dispatch(loadPetsFailure(errorMessage))
-			})
+		try {
+			const response = await authorizedAxios.get('/pets');
+			dispatch(loadPetsSuccess(response.data));
+		} catch (error) {
+			dispatch(loadPetsFailure(error));
+			dispatch(() => enqueueSnackbar(
+				error?.data?.message ?? 'Something went wrong.',
+				{ variant: 'error' }
+			))
+		}
 	}
 }
